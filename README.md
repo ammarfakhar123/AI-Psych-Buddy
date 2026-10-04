@@ -177,6 +177,18 @@ ingest_knowledge.py    build the vector index
 * Chats are stored unencrypted in the database. Do not deploy publicly without a privacy review,
   HTTPS, and proper data-protection practices.
 
+## Netlify secrets scanning
+
+`RAG_MAX_DISTANCE` is a non-sensitive retrieval relevance threshold, not a credential.
+Its numeric value can also occur in CSS and default configuration, causing false positives
+when Netlify scans environment variable values. The repository's `netlify.toml` excludes
+only this key using `SECRETS_SCAN_OMIT_KEYS`; scanning remains enabled for other secrets
+and all repository and build-output files.
+
+This exclusion preserves the configured retrieval behavior without changing the threshold
+or exempting entire files. Existing build command and publish directory settings in the
+Netlify UI remain unchanged. Redeploy after this configuration change is merged.
+
 ## 13. Future improvements
 
 * ML-based risk classifier and human-review workflow
