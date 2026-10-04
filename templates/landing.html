@@ -130,9 +130,12 @@
           </div>
         </div>
 
-        <div>
+        <div class="d-flex align-items-center justify-content-center gap-2 flex-wrap">
           <button id="startHomeBreathingBtn" class="btn btn-primary rounded-pill px-4 fw-bold">
             <i class="bi bi-play-fill me-1"></i> Start 60s Breathing Session
+          </button>
+          <button id="homeVoiceToggleBtn" class="btn btn-outline-secondary rounded-pill px-3 fw-bold small">
+            <i class="bi bi-volume-up-fill me-1 text-success"></i> Voice: ON
           </button>
         </div>
       </div>
@@ -547,19 +550,51 @@ document.addEventListener('DOMContentLoaded', function() {
     if (resetBtn) resetBtn.addEventListener('click', createOrbs);
   }
 
-  // --- 2. Live 4-7-8 Breathing Session Widget ---
+  // --- 2. Live 4-7-8 Breathing Session Widget with Spoken Voice Guidance ---
   const breathRing = document.getElementById('homeBreathingRing');
   const phaseText = document.getElementById('breathPhaseText');
   const timerText = document.getElementById('breathTimerText');
   const startBtn = document.getElementById('startHomeBreathingBtn');
+  const voiceToggleBtn = document.getElementById('homeVoiceToggleBtn');
 
   if (startBtn && breathRing) {
     let breathingInterval = null;
     let isRunning = false;
+    let voiceEnabled = true;
+
+    function speakPhaseInstruction(text) {
+      if (!voiceEnabled) return;
+      try {
+        if ('speechSynthesis' in window) {
+          window.speechSynthesis.cancel();
+          const cleanText = text.replace('...', '');
+          const utterance = new SpeechSynthesisUtterance(cleanText);
+          utterance.rate = 0.88;
+          utterance.pitch = 1.0;
+          utterance.volume = 1.0;
+          window.speechSynthesis.speak(utterance);
+        }
+      } catch(e) {}
+    }
+
+    if (voiceToggleBtn) {
+      voiceToggleBtn.addEventListener('click', function() {
+        voiceEnabled = !voiceEnabled;
+        if (voiceEnabled) {
+          voiceToggleBtn.className = 'btn btn-outline-secondary rounded-pill px-3 fw-bold small';
+          voiceToggleBtn.innerHTML = '<i class="bi bi-volume-up-fill me-1 text-success"></i> Voice: ON';
+        } else {
+          voiceToggleBtn.className = 'btn btn-outline-secondary rounded-pill px-3 fw-bold small opacity-75';
+          voiceToggleBtn.innerHTML = '<i class="bi bi-volume-mute-fill me-1 text-danger"></i> Voice: OFF';
+          if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+        }
+      });
+    }
 
     startBtn.addEventListener('click', function() {
       if (isRunning) {
         clearInterval(breathingInterval);
+        if ('speechSynthesis' in window) window.speechSynthesis.cancel();
         isRunning = false;
         breathRing.className = 'home-breathing-ring';
         phaseText.textContent = 'Ready';
@@ -579,9 +614,16 @@ document.addEventListener('DOMContentLoaded', function() {
 
       let cycleIdx = 0;
       let secondsLeft = cycle[0].duration;
+      let lastPhaseIdx = -1;
 
       function updatePhase() {
         const current = cycle[cycleIdx];
+
+        if (lastPhaseIdx !== cycleIdx) {
+          lastPhaseIdx = cycleIdx;
+          speakPhaseInstruction(current.phase);
+        }
+
         breathRing.className = 'home-breathing-ring ' + current.class;
         phaseText.textContent = current.phase;
         timerText.textContent = secondsLeft + 's';
