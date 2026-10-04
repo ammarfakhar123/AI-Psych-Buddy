@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block title %}{{ exercise.title }} - AI Psych Buddy{% endblock %}
+{% block content %}
+<a href="{% url 'exercises:grounding_list' %}" class="small"><i class="bi bi-arrow-left"></i> All grounding exercises</a>
+<div class="card-soft p-4 p-md-5 mt-3 mx-auto" style="max-width:720px;">
+  <h3 class="page-title text-center">{{ exercise.title }}</h3>
+  <p class="text-center text-muted-soft">{{ exercise.description }}</p>
+  <div class="step-dots my-4" id="dots"></div>
+  <div id="stepArea" class="text-center py-3" style="min-height:190px;">
+    <div class="icon-bubble bubble-teal mx-auto mb-3" style="width:64px;height:64px;font-size:1.8rem"><i class="bi bi-tree"></i></div>
+    <h4 id="stepTitle" class="fw-bold"></h4>
+    <p id="stepPrompt" class="fs-5 text-muted-soft"></p>
+    <textarea id="stepNotes" class="form-control mt-2 d-none" rows="2" placeholder="Optional: jot down what you notice (not saved)"></textarea>
+  </div>
+  <div class="d-flex justify-content-between mt-3">
+    <button class="btn btn-outline-secondary rounded-pill px-4" id="prevBtn">Back</button>
+    <button class="btn btn-primary rounded-pill px-4" id="nextBtn">Begin</button>
+  </div>
+</div>
+{{ exercise.steps|json_script:"steps-data" }}
+{% endblock %}
+{% block extra_js %}
+<script>
+  var steps = JSON.parse(document.getElementById('steps-data').textContent);
+  var index = -1; // -1 = intro
+  var dots = document.getElementById('dots');
+  var titleEl = document.getElementById('stepTitle'), promptEl = document.getElementById('stepPrompt');
+  var nextBtn = document.getElementById('nextBtn'), prevBtn = document.getElementById('prevBtn'), notes = document.getElementById('stepNotes');
+  steps.forEach(function () { var d = document.createElement('span'); d.className = 'dot'; dots.appendChild(d); });
+
+  function render() {
+    Array.prototype.forEach.call(dots.children, function (d, i) {
+      d.className = 'dot' + (i === index ? ' active' : (i < index ? ' done' : ''));
+    });
+    prevBtn.style.visibility = index < 0 ? 'hidden' : 'visible';
+    notes.classList.toggle('d-none', index < 0 || index >= steps.length);
+    if (index < 0) {
+      titleEl.textContent = 'Find a comfortable position';
+      promptEl.textContent = 'Take a slow breath. Go at your own pace; there is no right or wrong way to do this.';
+      nextBtn.textContent = 'Begin';
+    } else if (index < steps.length) {
+      titleEl.textContent = steps[index].title;
+      promptEl.textContent = steps[index].prompt;
+      notes.value = '';
+      nextBtn.textContent = index === steps.length - 1 ? 'Finish' : 'Next';
+    } else {
+      titleEl.textContent = 'Well done 💙';
+      promptEl.textContent = 'Notice how you feel right now. You can repeat this exercise whenever you like.';
+      nextBtn.textContent = 'Restart';
+    }
+  }
+  nextBtn.addEventListener('click', function () { index = index > steps.length - 1 ? -1 : index + 1; render(); });
+  prevBtn.addEventListener('click', function () { if (index >= 0) { index -= 1; render(); } });
+  render();
+</script>
+{% endblock %}

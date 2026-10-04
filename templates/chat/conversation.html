@@ -1,0 +1,224 @@
+
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ conversation.title }} - AI Psych Buddy{% endblock %}
+
+{% block content %}
+
+<div class="chat-layout">
+
+  <!-- Chat Sidebar -->
+  <aside class="chat-sidebar card-soft p-3">
+
+    <!-- New Chat -->
+    <form method="post"
+          action="{% url 'chat:new' %}"
+          class="mb-3">
+
+      {% csrf_token %}
+
+      <button type="submit"
+              class="btn btn-primary w-100 rounded-pill">
+
+        <i class="bi bi-plus-lg me-1"></i>
+        New Chat
+
+      </button>
+
+    </form>
+
+    <!-- Recent Conversations -->
+    <div class="small fw-semibold text-uppercase text-muted-soft px-2 mb-2"
+         style="letter-spacing: .08em;">
+      Recent Conversations
+    </div>
+
+    <div class="conversation-list">
+
+      {% for c in sidebar_conversations %}
+
+        <a href="{% url 'chat:detail' c.pk %}"
+           class="convo-link {% if c.pk == conversation.pk %}active{% endif %}">
+
+          <i class="bi bi-chat-left-text me-2"></i>
+
+          <span class="text-truncate">
+            {{ c.title }}
+          </span>
+
+        </a>
+
+      {% empty %}
+
+        <p class="small text-muted-soft px-2 mb-0">
+          No previous conversations.
+        </p>
+
+      {% endfor %}
+
+    </div>
+
+    <!-- History -->
+    <a href="{% url 'chat:history' %}"
+       class="btn btn-sm btn-light w-100 rounded-pill mt-3">
+
+      <i class="bi bi-clock-history me-1"></i>
+      View All History
+
+    </a>
+
+  </aside>
+
+
+  <!-- Main Chat Panel -->
+  <section class="card-soft chat-panel">
+
+    <!-- Chat Header -->
+    <div class="d-flex justify-content-between align-items-center px-3 px-md-4 py-3 border-bottom bg-white bg-opacity-50">
+
+      <div class="d-flex align-items-center gap-3 text-truncate">
+        <div class="icon-bubble bubble-rose shadow-sm flex-shrink-0" style="width:44px;height:44px;font-size:1.1rem;">
+          <i class="bi bi-chat-heart-fill"></i>
+        </div>
+
+        <div class="text-truncate">
+          <div class="d-flex align-items-center gap-2">
+            <span class="user-status-dot"></span>
+            <span class="small fw-bold text-uppercase" style="font-size:0.7rem; letter-spacing:0.08em; color:var(--buddy-sage-dark);">AI Wellness Companion &middot; Online</span>
+          </div>
+
+          <strong id="chatTitle" class="d-block text-truncate fs-6" style="color:var(--buddy-text);">
+            {{ conversation.title }}
+          </strong>
+        </div>
+      </div>
+
+      <!-- Delete Conversation -->
+      <form method="post"
+            action="{% url 'chat:delete' conversation.pk %}"
+            onsubmit="return confirm('Delete this conversation permanently?');"
+            class="m-0">
+        {% csrf_token %}
+        <button type="submit"
+                class="btn btn-sm btn-outline-danger rounded-pill px-3"
+                aria-label="Delete conversation"
+                title="Delete conversation">
+          <i class="bi bi-trash me-1"></i> Delete
+        </button>
+      </form>
+
+    </div>
+
+
+    <!-- Messages -->
+    <div class="chat-messages"
+         id="chatMessages">
+
+      {% if not chat_messages %}
+
+        <div class="bubble assistant"
+             id="welcomeBubble">
+
+          Hi {{ user.profile.friendly_name }}, I'm Buddy 💙
+          I'm an AI wellness companion.
+          How are you feeling today?
+
+        </div>
+
+      {% endif %}
+
+
+      {% for m in chat_messages %}
+
+        <div class="bubble {{ m.sender }}{% if m.is_crisis %} crisis{% endif %}"
+             data-raw="{{ m.message|escape }}">
+
+          <div class="bubble-text">
+            {{ m.message|linebreaksbr }}
+          </div>
+
+
+          {% if m.sources %}
+
+            <div class="mt-2">
+
+              {% for s in m.sources %}
+
+                <span class="source-chip">
+                  <i class="bi bi-book me-1"></i>
+                  {{ s }}
+                </span>
+
+              {% endfor %}
+
+            </div>
+
+          {% endif %}
+
+        </div>
+
+      {% endfor %}
+
+    </div>
+
+
+    <!-- Suggestions -->
+    <div class="suggestion-strip px-3 px-md-4 pb-2"
+         id="suggestionStrip">
+    </div>
+
+
+    <!-- Message Input -->
+    <form class="chat-input px-3 px-md-4 pb-3"
+          id="chatForm"
+          autocomplete="off">
+
+      <div class="input-group">
+
+        <input type="text"
+               class="form-control"
+               id="chatInput"
+               maxlength="2000"
+               placeholder="Share how you're feeling..."
+               aria-label="Message">
+
+        <button class="btn btn-primary px-4"
+                id="sendBtn"
+                type="submit"
+                aria-label="Send message">
+
+          <i class="bi bi-send-fill"></i>
+
+        </button>
+
+      </div>
+
+
+      <div class="small text-muted-soft mt-2 text-center">
+
+        {{ WELLNESS_DISCLAIMER }}
+
+      </div>
+
+    </form>
+
+  </section>
+
+</div>
+
+{% endblock %}
+
+
+{% block extra_js %}
+
+<script>
+  window.CHAT_CONFIG = {
+    sendUrl: "{% url 'chat:send' conversation.pk %}"
+  };
+</script>
+
+<script src="{% static 'js/chat.js' %}"></script>
+
+{% endblock %}
+

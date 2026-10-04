@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Login - AI Psych Buddy{% endblock %}
+
+{% block content %}
+<div class="container py-4 py-md-5 animate-fade-up">
+  <div class="auth-card card-soft p-4 p-md-5 mx-auto" style="max-width: 480px;">
+
+    <!-- Header Icon & Title -->
+    <div class="text-center mb-4">
+      <div class="icon-bubble bubble-primary mx-auto mb-3" style="width: 56px; height: 56px; font-size: 1.5rem;">
+        <i class="bi bi-box-arrow-in-right"></i>
+      </div>
+      <h2 class="page-title fw-extrabold mb-1" style="letter-spacing:-0.02em;">Welcome Back</h2>
+      <p class="text-muted small mb-0">Log in to access your personal mental wellness dashboard.</p>
+    </div>
+
+    <!-- Login Form -->
+    <form method="post" novalidate>
+      {% csrf_token %}
+
+      {% if form.non_field_errors %}
+      <div class="alert alert-danger alert-dismissible fade show rounded-4 py-2 px-3 mb-3 small" role="alert">
+        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+        {{ form.non_field_errors.0 }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+      {% endif %}
+
+      {% for field in form %}
+      <div class="mb-3">
+        <label class="form-label fw-bold small text-secondary" for="{{ field.id_for_label }}">
+          {{ field.label }}
+        </label>
+        {{ field }}
+        {% if field.errors %}
+        <div class="text-danger small mt-1">
+          <i class="bi bi-x-circle me-1"></i>{{ field.errors.0 }}
+        </div>
+        {% endif %}
+      </div>
+      {% endfor %}
+
+      <input type="hidden" name="next" value="{{ next }}">
+
+      <button class="btn btn-primary w-100 rounded-pill py-2.5 fw-bold shadow-sm mt-3" type="submit">
+        <i class="bi bi-box-arrow-in-right me-2"></i> Login to Your Account
+      </button>
+    </form>
+
+    <!-- Footer Links -->
+    <div class="text-center mt-4 pt-3 border-top">
+      <p class="mb-0 text-muted small">
+        Don't have an account yet?
+        <a href="{% url 'accounts:register' %}" class="fw-bold text-decoration-none ms-1" style="color:var(--buddy-primary);">
+          Create Free Account <i class="bi bi-arrow-right"></i>
+        </a>
+      </p>
+    </div>
+
+  </div>
+</div>
+{% endblock %}
+

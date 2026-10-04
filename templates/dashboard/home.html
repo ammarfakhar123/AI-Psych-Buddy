@@ -1,0 +1,1346 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Dashboard - AI Psych Buddy{% endblock %}
+
+{% block content %}
+
+<style>
+/* =========================================================
+   DASHBOARD PREMIUM UI
+   ========================================================= */
+
+.dashboard-page {
+    position: relative;
+    overflow: hidden;
+}
+
+/* ---------- Decorative background ---------- */
+
+.dashboard-page::before,
+.dashboard-page::after {
+    content: "";
+    position: fixed;
+    width: 260px;
+    height: 260px;
+    border-radius: 50%;
+    filter: blur(70px);
+    opacity: .18;
+    pointer-events: none;
+    z-index: -1;
+}
+
+.dashboard-page::before {
+    background: var(--buddy-peach);
+    top: 80px;
+    right: -100px;
+    animation: floatingBlob 9s ease-in-out infinite;
+}
+
+.dashboard-page::after {
+    background: var(--buddy-lavender);
+    bottom: 80px;
+    left: -120px;
+    animation: floatingBlob 11s ease-in-out infinite reverse;
+}
+
+
+/* ---------- Main entrance ---------- */
+
+.dashboard-animate {
+    animation: dashboardFadeUp .7s ease both;
+}
+
+.dashboard-delay-1 {
+    animation-delay: .08s;
+}
+
+.dashboard-delay-2 {
+    animation-delay: .16s;
+}
+
+.dashboard-delay-3 {
+    animation-delay: .24s;
+}
+
+.dashboard-delay-4 {
+    animation-delay: .32s;
+}
+
+.dashboard-delay-5 {
+    animation-delay: .40s;
+}
+
+
+/* ---------- Hero ---------- */
+
+.dashboard-hero {
+    position: relative;
+    padding: 28px 30px;
+    border-radius: 28px;
+    overflow: hidden;
+    background:
+        radial-gradient(circle at 85% 20%, rgba(242,181,155,.35), transparent 28%),
+        radial-gradient(circle at 10% 100%, rgba(154,134,168,.20), transparent 30%),
+        linear-gradient(135deg, #fff9f3 0%, #f8eee9 100%);
+    border: 1px solid rgba(112,79,104,.10);
+    box-shadow: 0 18px 45px rgba(80,55,72,.08);
+}
+
+.dashboard-hero::after {
+    content: "";
+    position: absolute;
+    width: 180px;
+    height: 180px;
+    border: 1px solid rgba(112,79,104,.10);
+    border-radius: 50%;
+    right: -65px;
+    top: -65px;
+    animation: rotateSlow 18s linear infinite;
+}
+
+.dashboard-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    color: var(--buddy-coral);
+    font-size: .72rem;
+    font-weight: 800;
+    letter-spacing: .13em;
+    text-transform: uppercase;
+}
+
+.dashboard-eyebrow::before {
+    content: "";
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--buddy-coral);
+    box-shadow: 0 0 0 5px var(--buddy-coral-soft);
+    animation: pulseDot 2s ease-in-out infinite;
+}
+
+.dashboard-title {
+    font-size: clamp(1.8rem, 3vw, 2.45rem);
+    font-weight: 800;
+    color: var(--buddy-text);
+    letter-spacing: -.035em;
+}
+
+.dashboard-subtitle {
+    color: var(--buddy-muted);
+}
+
+
+/* ---------- Hero button ---------- */
+
+.dashboard-chat-btn {
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 10px 25px rgba(112,79,104,.22);
+    transition:
+        transform .3s ease,
+        box-shadow .3s ease;
+}
+
+.dashboard-chat-btn::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -120%;
+    width: 80%;
+    height: 100%;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255,255,255,.35),
+        transparent
+    );
+    transform: skewX(-20deg);
+}
+
+.dashboard-chat-btn:hover {
+    transform: translateY(-4px) scale(1.02);
+    box-shadow: 0 16px 32px rgba(112,79,104,.30);
+}
+
+.dashboard-chat-btn:hover::before {
+    animation: buttonShine .8s ease;
+}
+
+.dashboard-chat-btn i {
+    transition: transform .3s ease;
+}
+
+.dashboard-chat-btn:hover i {
+    transform: rotate(-8deg) scale(1.15);
+}
+
+
+/* ---------- Section cards ---------- */
+
+.dashboard-card {
+    position: relative;
+    border: 1px solid rgba(112,79,104,.08);
+    transition:
+        transform .35s cubic-bezier(.2,.8,.2,1),
+        box-shadow .35s ease,
+        border-color .35s ease;
+}
+
+.dashboard-card:hover {
+    transform: translateY(-7px);
+    border-color: rgba(112,79,104,.16);
+    box-shadow: 0 18px 38px rgba(65,48,60,.11);
+}
+
+
+/* ---------- Card header ---------- */
+
+.card-section-icon {
+    width: 46px;
+    height: 46px;
+    border-radius: 15px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition:
+        transform .35s ease,
+        box-shadow .35s ease;
+}
+
+.dashboard-card:hover .card-section-icon {
+    transform: rotate(-6deg) scale(1.08);
+    box-shadow: 0 8px 18px rgba(80,55,72,.12);
+}
+
+
+/* ---------- Mood ---------- */
+
+.today-mood-box {
+    position: relative;
+    overflow: hidden;
+    background: var(--buddy-peach-soft);
+    border: 1px solid rgba(217,130,118,.10);
+    transition: transform .3s ease;
+}
+
+.today-mood-box::after {
+    content: "";
+    position: absolute;
+    width: 110px;
+    height: 110px;
+    border-radius: 50%;
+    right: -45px;
+    top: -45px;
+    background: rgba(255,255,255,.28);
+}
+
+.today-mood-box:hover {
+    transform: translateY(-2px);
+}
+
+.today-emoji {
+    display: inline-block;
+    font-size: 2.8rem;
+    animation: gentleFloat 3s ease-in-out infinite;
+}
+
+
+/* ---------- Mood buttons ---------- */
+
+.mood-btn {
+    position: relative;
+    overflow: hidden;
+    border: 1px solid rgba(112,79,104,.10);
+    background: rgba(255,255,255,.72);
+    border-radius: 17px;
+    padding: 12px 6px;
+    min-height: 82px;
+    transition:
+        transform .25s ease,
+        box-shadow .25s ease,
+        background .25s ease,
+        border-color .25s ease;
+}
+
+.mood-btn::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        120deg,
+        transparent 30%,
+        rgba(255,255,255,.55),
+        transparent 70%
+    );
+    transform: translateX(-120%);
+}
+
+.mood-btn:hover {
+    transform: translateY(-5px);
+    background: #fff;
+    border-color: rgba(112,79,104,.22);
+    box-shadow: 0 10px 22px rgba(80,55,72,.10);
+}
+
+.mood-btn:hover::after {
+    animation: moodShine .65s ease;
+}
+
+.mood-btn .emoji {
+    display: block;
+    font-size: 1.7rem;
+    margin-bottom: 4px;
+    transition: transform .3s ease;
+}
+
+.mood-btn:hover .emoji {
+    transform: scale(1.22) rotate(-5deg);
+}
+
+.mood-btn .label {
+    display: block;
+    font-size: .72rem;
+    font-weight: 700;
+    color: var(--buddy-muted);
+}
+
+
+/* ---------- Progress / chart ---------- */
+
+.progress-card {
+    background:
+        radial-gradient(circle at 100% 0%, rgba(154,134,168,.12), transparent 35%),
+        linear-gradient(145deg, #fff, #fcf7f3);
+}
+
+.chart-container-premium {
+    position: relative;
+    min-height: 245px;
+    border-radius: 20px;
+    padding: 8px;
+    background: rgba(255,255,255,.65);
+    border: 1px solid rgba(112,79,104,.07);
+}
+
+
+/* ---------- AI Suggestions ---------- */
+
+.suggestion-card {
+    position: relative;
+    overflow: hidden;
+    background: rgba(255,255,255,.72);
+    border: 1px solid rgba(112,79,104,.08);
+    transition:
+        transform .3s ease,
+        box-shadow .3s ease,
+        background .3s ease;
+}
+
+.suggestion-card::before {
+    content: "";
+    position: absolute;
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    right: -30px;
+    top: -30px;
+    background: var(--buddy-lavender-soft);
+    opacity: .65;
+    transition: transform .4s ease;
+}
+
+.suggestion-card:hover {
+    transform: translateY(-6px);
+    background: #fff;
+    box-shadow: 0 14px 30px rgba(80,55,72,.10);
+}
+
+.suggestion-card:hover::before {
+    transform: scale(1.7);
+}
+
+.suggestion-icon {
+    transition:
+        transform .4s ease,
+        box-shadow .4s ease;
+}
+
+.suggestion-card:hover .suggestion-icon {
+    transform: rotate(8deg) scale(1.12);
+    box-shadow: 0 8px 18px rgba(80,55,72,.14);
+}
+
+.suggestion-link {
+    transition: gap .25s ease;
+}
+
+.suggestion-card:hover .suggestion-link {
+    letter-spacing: .01em;
+}
+
+
+/* ---------- Section heading ---------- */
+
+.section-kicker {
+    color: var(--buddy-coral);
+    font-size: .72rem;
+    font-weight: 800;
+    letter-spacing: .13em;
+    text-transform: uppercase;
+}
+
+
+/* ---------- Exercise cards ---------- */
+
+.exercise-card {
+    position: relative;
+    overflow: hidden;
+    min-height: 205px;
+    transition:
+        transform .4s cubic-bezier(.2,.8,.2,1),
+        box-shadow .4s ease;
+}
+
+.exercise-card::before {
+    content: "";
+    position: absolute;
+    width: 170px;
+    height: 170px;
+    border-radius: 50%;
+    right: -85px;
+    bottom: -85px;
+    background: var(--buddy-lavender-soft);
+    transition: transform .45s ease;
+}
+
+.exercise-card:hover {
+    transform: translateY(-9px);
+    box-shadow: 0 20px 38px rgba(65,48,60,.13);
+}
+
+.exercise-card:hover::before {
+    transform: scale(1.45);
+}
+
+.exercise-icon {
+    position: relative;
+    transition:
+        transform .4s ease,
+        box-shadow .4s ease;
+}
+
+.exercise-card:hover .exercise-icon {
+    transform: translateY(-5px) rotate(-7deg) scale(1.12);
+    box-shadow: 0 10px 20px rgba(80,55,72,.14);
+}
+
+.exercise-arrow {
+    position: absolute;
+    right: 22px;
+    bottom: 22px;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255,255,255,.75);
+    color: var(--buddy-primary);
+    transition:
+        transform .3s ease,
+        background .3s ease;
+}
+
+.exercise-card:hover .exercise-arrow {
+    transform: translateX(5px);
+    background: var(--buddy-primary-soft);
+}
+
+
+/* ---------- Activity rows ---------- */
+
+.activity-row {
+    border-radius: 14px;
+    padding-left: 10px !important;
+    padding-right: 10px !important;
+    transition:
+        background .25s ease,
+        transform .25s ease;
+}
+
+.activity-row:hover {
+    background: var(--buddy-cream);
+    transform: translateX(4px);
+}
+
+.activity-icon {
+    transition: transform .25s ease;
+}
+
+.activity-row:hover .activity-icon {
+    transform: scale(1.15);
+}
+
+
+/* ---------- Empty states ---------- */
+
+.empty-state {
+    border-radius: 18px;
+    background: linear-gradient(
+        145deg,
+        rgba(255,249,243,.8),
+        rgba(238,232,242,.55)
+    );
+}
+
+
+/* ---------- Disclaimer ---------- */
+
+.dashboard-disclaimer {
+    position: relative;
+    overflow: hidden;
+    transition:
+        transform .3s ease,
+        box-shadow .3s ease;
+}
+
+.dashboard-disclaimer:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(80,55,72,.08);
+}
+
+
+/* ---------- Animations ---------- */
+
+@keyframes dashboardFadeUp {
+    from {
+        opacity: 0;
+        transform: translateY(22px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes floatingBlob {
+    0%, 100% {
+        transform: translate(0, 0) scale(1);
+    }
+
+    50% {
+        transform: translate(20px, -25px) scale(1.08);
+    }
+}
+
+@keyframes pulseDot {
+    0%, 100% {
+        box-shadow: 0 0 0 4px var(--buddy-coral-soft);
+    }
+
+    50% {
+        box-shadow: 0 0 0 8px rgba(217,130,118,.05);
+    }
+}
+
+@keyframes gentleFloat {
+    0%, 100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-7px);
+    }
+}
+
+@keyframes rotateSlow {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes buttonShine {
+    from {
+        left: -120%;
+    }
+
+    to {
+        left: 140%;
+    }
+}
+
+@keyframes moodShine {
+    from {
+        transform: translateX(-120%);
+    }
+
+    to {
+        transform: translateX(120%);
+    }
+}
+
+
+/* ---------- Responsive ---------- */
+
+@media (max-width: 767px) {
+
+    .dashboard-hero {
+        padding: 22px;
+        border-radius: 22px;
+    }
+
+    .dashboard-title {
+        font-size: 1.8rem;
+    }
+
+    .dashboard-chat-btn {
+        width: 100%;
+    }
+
+    .mood-btn {
+        min-height: 76px;
+    }
+
+    .chart-container-premium {
+        min-height: 210px;
+    }
+}
+
+
+/* ---------- Reduced motion ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+
+    *,
+    *::before,
+    *::after {
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: .01ms !important;
+    }
+}
+</style>
+
+
+<div class="dashboard-page">
+
+    <!-- =====================================================
+         DASHBOARD HEADER
+         ===================================================== -->
+
+    <div class="dashboard-hero dashboard-animate dashboard-delay-1 mb-4">
+        <div class="row align-items-center g-4">
+            <div class="col-lg-7 col-md-7">
+                <div class="dashboard-eyebrow mb-2">
+                    <i class="bi bi-brain fs-6 me-1"></i> Your wellness space
+                </div>
+
+                <h2 class="dashboard-title mb-2">
+                    Hello, {{ user.profile.friendly_name }}
+                </h2>
+
+                <div class="d-flex align-items-center gap-2 mb-3">
+                  <span class="brand-icon shadow-sm flex-shrink-0" style="width:32px; height:32px; font-size:1rem;">
+                    <i class="bi bi-brain text-primary"></i>
+                  </span>
+                  <p class="dashboard-subtitle mb-0 fw-semibold">
+                      {{ today|date:"l, F j" }}
+                      <span class="mx-1">&middot;</span>
+                      Take a quiet moment for yourself today.
+                  </p>
+                </div>
+
+                <form method="post" action="{% url 'chat:new' %}" class="mt-3">
+                    {% csrf_token %}
+                    <button class="btn btn-primary btn-lg rounded-pill px-4 dashboard-chat-btn" type="submit">
+                        <i class="bi bi-chat-heart me-1"></i> Start AI Chat
+                    </button>
+                </form>
+            </div>
+
+            <!-- Right side brain emblem badge -->
+            <div class="col-lg-5 col-md-5 text-center text-md-end">
+                <div class="d-inline-flex align-items-center gap-3 p-3 rounded-4 bg-white bg-opacity-75 shadow-sm border border-secondary border-opacity-10">
+                    <span class="brand-icon shadow-sm flex-shrink-0" style="width:48px; height:48px; font-size:1.5rem;">
+                        <i class="bi bi-brain text-primary"></i>
+                    </span>
+                    <div class="text-start">
+                        <strong class="d-block text-nowrap" style="color:var(--buddy-primary-dark);">24/7 AI Companion</strong>
+                        <small class="text-muted fw-bold">Online &amp; Ready to Listen</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- =====================================================
+         MOOD + TREND
+         ===================================================== -->
+
+    <div class="row g-4 mb-4">
+
+
+        <!-- Today's Mood -->
+
+        <div class="col-lg-5 dashboard-animate dashboard-delay-2">
+
+            <div class="card-soft dashboard-card p-4 h-100">
+
+                <div class="d-flex align-items-center gap-3 mb-4">
+
+                    <div class="card-section-icon"
+                         style="background:var(--buddy-peach-soft);
+                                color:var(--buddy-coral);">
+
+                        <i class="bi bi-emoji-smile fs-5"></i>
+
+                    </div>
+
+                    <div>
+
+                        <h5 class="fw-bold mb-1">
+                            Today's Mood
+                        </h5>
+
+                        <p class="small text-muted-soft mb-0">
+                            Check in with yourself
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                {% if today_entry %}
+
+                <div class="today-mood-box rounded-4
+                            d-flex align-items-center gap-3
+                            mb-3 p-3">
+
+                    <span class="today-emoji">
+                        {{ today_entry.emoji }}
+                    </span>
+
+                    <div>
+
+                        <div class="fs-5 fw-bold">
+                            {{ today_entry.get_mood_display }}
+                        </div>
+
+                        <div class="text-muted-soft small">
+
+                            Score {{ today_entry.score }}/5
+
+                            {% if today_entry.note %}
+
+                            <span class="mx-1">&middot;</span>
+
+                            {{ today_entry.note|truncatechars:60 }}
+
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <p class="small text-muted-soft mb-3">
+                    Feeling different now? Update your check-in:
+                </p>
+
+                {% else %}
+
+                <div class="text-center py-3 mb-3">
+
+                    <div class="fs-1 mb-2"
+                         style="animation:gentleFloat 3s ease-in-out infinite;">
+                        🌿
+                    </div>
+
+                    <p class="text-muted-soft mb-0">
+                        How are you feeling right now?
+                    </p>
+
+                </div>
+
+                {% endif %}
+
+
+                <!-- Quick Mood Form -->
+
+                <form method="post"
+                      action="{% url 'mood:tracker' %}"
+                      id="quickMoodForm">
+
+                    {% csrf_token %}
+
+                    <input
+                        type="hidden"
+                        name="mood"
+                        id="quickMood">
+
+                    <input
+                        type="hidden"
+                        name="score"
+                        id="quickScore"
+                        value="3">
+
+
+                    <div class="row g-2">
+
+                        {% for m in mood_options %}
+
+                        <div class="col-3">
+
+                            <button
+                                type="button"
+                                class="mood-btn quick-mood w-100"
+                                data-mood="{{ m.value }}"
+                                data-score="{{ m.score }}">
+
+                                <span class="emoji">
+                                    {{ m.emoji }}
+                                </span>
+
+                                <span class="label">
+                                    {{ m.label }}
+                                </span>
+
+                            </button>
+
+                        </div>
+
+                        {% endfor %}
+
+                    </div>
+
+                </form>
+
+            </div>
+
+        </div>
+
+
+        <!-- Mood Trend -->
+
+        <div class="col-lg-7 dashboard-animate dashboard-delay-3">
+
+            <div class="card-soft dashboard-card progress-card p-4 h-100">
+
+                <div class="d-flex justify-content-between
+                            align-items-center mb-3">
+
+                    <div>
+
+                        <span class="section-kicker">
+                            Your progress
+                        </span>
+
+                        <h5 class="fw-bold mb-0 mt-1">
+                            Mood Trend
+                        </h5>
+
+                    </div>
+
+                    <a
+                        href="{% url 'mood:tracker' %}"
+                        class="small fw-semibold text-decoration-none">
+
+                        Open Tracker
+                        <i class="bi bi-arrow-right ms-1"></i>
+
+                    </a>
+
+                </div>
+
+
+                <div class="chart-container-premium">
+
+                    <div class="chart-wrap">
+                        <canvas
+                            id="moodChart"
+                            data-url="{% url 'mood:chart_data' %}?range=7">
+                        </canvas>
+                    </div>
+
+                </div>
+
+
+                <p class="small text-muted-soft mt-3 mb-0">
+                    {{ week_trend }}
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         AI WELLNESS SUGGESTIONS
+         ===================================================== -->
+
+    <div class="card-soft dashboard-card p-4 mb-5
+                dashboard-animate dashboard-delay-4">
+
+        <div class="d-flex align-items-center gap-3 mb-2">
+
+            <div class="card-section-icon"
+                 style="background:var(--buddy-lavender-soft);
+                        color:var(--buddy-primary);">
+
+                <i class="bi bi-magic fs-5"></i>
+
+            </div>
+
+            <div>
+
+                <h5 class="fw-bold mb-1">
+                    AI Wellness Suggestions
+                </h5>
+
+                <p class="small text-muted-soft mb-0">
+                    Gentle ideas based on your mood and latest conversation.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <p class="small text-muted-soft mb-4 ms-0">
+            These are general wellness ideas, not medical advice.
+        </p>
+
+
+        <div class="row g-3">
+
+            {% for s in suggestions %}
+
+            <div class="col-md-4">
+
+                <div class="suggestion-card rounded-4 p-3 h-100
+                            d-flex gap-3">
+
+                    <div class="icon-bubble bubble-teal
+                                suggestion-icon flex-shrink-0">
+
+                        <i class="bi {{ s.icon }}"></i>
+
+                    </div>
+
+                    <div class="position-relative">
+
+                        <div class="fw-bold mb-1">
+                            {{ s.title }}
+                        </div>
+
+                        <div class="small text-muted-soft mb-2">
+                            {{ s.description }}
+                        </div>
+
+                        {% if s.url_name %}
+
+                        <a
+                            class="small fw-semibold text-decoration-none suggestion-link"
+                            href="{% url s.url_name %}">
+
+                            Open
+                            <i class="bi bi-arrow-right ms-1"></i>
+
+                        </a>
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         GUIDED EXERCISES
+         ===================================================== -->
+
+    <div class="mb-3 dashboard-animate dashboard-delay-4">
+
+        <span class="section-kicker">
+            Take a mindful moment
+        </span>
+
+        <h4 class="fw-bold mt-2 mb-0">
+            Guided Exercises
+        </h4>
+
+    </div>
+
+
+    <div class="row g-4 mb-5">
+
+
+        <!-- CBT -->
+
+        <div class="col-md-4">
+
+            <a
+                href="{% url 'exercises:cbt_new' %}"
+                class="text-decoration-none text-reset">
+
+                <div class="card-soft exercise-card p-4 h-100">
+
+                    <div class="icon-bubble bubble-lavender
+                                exercise-icon mb-3">
+
+                        <i class="bi bi-lightbulb"></i>
+
+                    </div>
+
+                    <h5 class="fw-bold">
+                        CBT Exercises
+                    </h5>
+
+                    <p class="text-muted-soft small mb-0">
+                        Reflect on a thought step by step.
+                    </p>
+
+                    <div class="exercise-arrow">
+                        <i class="bi bi-arrow-up-right"></i>
+                    </div>
+
+                </div>
+
+            </a>
+
+        </div>
+
+
+        <!-- Grounding -->
+
+        <div class="col-md-4">
+
+            <a
+                href="{% url 'exercises:grounding_list' %}"
+                class="text-decoration-none text-reset">
+
+                <div class="card-soft exercise-card p-4 h-100">
+
+                    <div class="icon-bubble bubble-teal
+                                exercise-icon mb-3">
+
+                        <i class="bi bi-tree"></i>
+
+                    </div>
+
+                    <h5 class="fw-bold">
+                        Grounding Exercises
+                    </h5>
+
+                    <p class="text-muted-soft small mb-0">
+                        Come back to the present with your senses.
+                    </p>
+
+                    <div class="exercise-arrow">
+                        <i class="bi bi-arrow-up-right"></i>
+                    </div>
+
+                </div>
+
+            </a>
+
+        </div>
+
+
+        <!-- Breathing -->
+
+        <div class="col-md-4">
+
+            <a
+                href="{% url 'exercises:breathing' %}"
+                class="text-decoration-none text-reset">
+
+                <div class="card-soft exercise-card p-4 h-100">
+
+                    <div class="icon-bubble bubble-rose
+                                exercise-icon mb-3">
+
+                        <i class="bi bi-wind"></i>
+
+                    </div>
+
+                    <h5 class="fw-bold">
+                        Breathing Exercise
+                    </h5>
+
+                    <p class="text-muted-soft small mb-0">
+                        A calm, visual breathing guide.
+                    </p>
+
+                    <div class="exercise-arrow">
+                        <i class="bi bi-arrow-up-right"></i>
+                    </div>
+
+                </div>
+
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         RECENT ACTIVITY
+         ===================================================== -->
+
+    <div class="row g-4 mb-5">
+
+
+        <!-- Recent Conversations -->
+
+        <div class="col-lg-6">
+
+            <div class="card-soft dashboard-card p-4 h-100">
+
+                <div class="d-flex justify-content-between
+                            align-items-center mb-3">
+
+                    <div>
+
+                        <h5 class="fw-bold mb-1">
+                            Recent Conversations
+                        </h5>
+
+                        <p class="small text-muted-soft mb-0">
+                            Continue where you left off.
+                        </p>
+
+                    </div>
+
+                    <a
+                        href="{% url 'chat:history' %}"
+                        class="small fw-semibold text-decoration-none">
+
+                        View All
+
+                    </a>
+
+                </div>
+
+
+                {% for c in recent_conversations %}
+
+                <a
+                    href="{% url 'chat:detail' c.pk %}"
+                    class="activity-row d-flex
+                           align-items-center justify-content-between
+                           gap-3 text-decoration-none text-reset
+                           py-3 border-bottom">
+
+                    <span class="text-truncate">
+
+                        <i
+                            class="bi bi-chat-heart me-2 activity-icon"
+                            style="color:var(--buddy-coral);">
+                        </i>
+
+                        {{ c.title }}
+
+                    </span>
+
+                    <span class="small text-muted-soft flex-shrink-0">
+
+                        {{ c.updated_at|timesince }} ago
+
+                    </span>
+
+                </a>
+
+
+                {% empty %}
+
+                <div class="empty-state text-center py-4">
+
+                    <i
+                        class="bi bi-chat-square-heart fs-2"
+                        style="color:var(--buddy-lavender);">
+                    </i>
+
+                    <p class="text-muted-soft mb-0 mt-2">
+                        No conversations yet.
+                        Say hello to your buddy!
+                    </p>
+
+                </div>
+
+                {% endfor %}
+
+            </div>
+
+        </div>
+
+
+        <!-- Recent Moods -->
+
+        <div class="col-lg-6">
+
+            <div class="card-soft dashboard-card p-4 h-100">
+
+                <div class="d-flex justify-content-between
+                            align-items-center mb-3">
+
+                    <div>
+
+                        <h5 class="fw-bold mb-1">
+                            Recent Mood Entries
+                        </h5>
+
+                        <p class="small text-muted-soft mb-0">
+                            Your latest check-ins.
+                        </p>
+
+                    </div>
+
+                    <a
+                        href="{% url 'mood:tracker' %}"
+                        class="small fw-semibold text-decoration-none">
+
+                        View All
+
+                    </a>
+
+                </div>
+
+
+                {% for m in recent_moods %}
+
+                <div
+                    class="activity-row d-flex
+                           justify-content-between align-items-center
+                           py-3 border-bottom">
+
+                    <span>
+
+                        <span class="me-2">
+                            {{ m.emoji }}
+                        </span>
+
+                        {{ m.get_mood_display }}
+
+                    </span>
+
+                    <span class="small text-muted-soft">
+
+                        {{ m.date|date:"M d" }}
+
+                        <span class="mx-1">&middot;</span>
+
+                        {{ m.score }}/5
+
+                    </span>
+
+                </div>
+
+
+                {% empty %}
+
+                <div class="empty-state text-center py-4">
+
+                    <i
+                        class="bi bi-emoji-smile fs-2"
+                        style="color:var(--buddy-peach);">
+                    </i>
+
+                    <p class="text-muted-soft mb-0 mt-2">
+                        No mood entries yet.
+                    </p>
+
+                </div>
+
+                {% endfor %}
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         DISCLAIMER
+         ===================================================== -->
+
+    <div class="disclaimer-box dashboard-disclaimer text-center
+                dashboard-animate dashboard-delay-5">
+
+        <i class="bi bi-shield-heart me-1"></i>
+
+        {{ WELLNESS_DISCLAIMER }}
+
+    </div>
+
+</div>
+
+
+{% endblock %}
+
+
+{% block extra_js %}
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+
+<script src="{% static 'js/mood-chart.js' %}"></script>
+
+
+<script>
+
+    /* -----------------------------------------
+       Quick Mood Selection
+       Existing functionality preserved
+       ----------------------------------------- */
+
+    document.querySelectorAll('.quick-mood').forEach(function (btn) {
+
+        btn.addEventListener('click', function () {
+
+            document.getElementById('quickMood').value =
+                btn.dataset.mood;
+
+            document.getElementById('quickScore').value =
+                btn.dataset.score;
+
+            /*
+             * Small click animation before submit
+             */
+            btn.style.transform = 'scale(0.94)';
+
+            setTimeout(function () {
+
+                document.getElementById('quickMoodForm').submit();
+
+            }, 120);
+
+        });
+
+    });
+
+</script>
+
+{% endblock %}

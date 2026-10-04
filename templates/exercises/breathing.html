@@ -1,0 +1,687 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Breathing - AI Psych Buddy{% endblock %}
+
+{% block content %}
+
+<style>
+/* =========================================================
+   BREATHING EXERCISE
+   ========================================================= */
+
+.breathing-page {
+    position: relative;
+    overflow: hidden;
+    min-height: 75vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px 0 40px;
+}
+
+
+/* ---------- Background atmosphere ---------- */
+
+.breathing-page::before,
+.breathing-page::after {
+    content: "";
+    position: absolute;
+    border-radius: 50%;
+    pointer-events: none;
+    filter: blur(65px);
+    z-index: -1;
+}
+
+.breathing-page::before {
+    width: 260px;
+    height: 260px;
+    background: var(--buddy-lavender);
+    opacity: .15;
+    top: 0;
+    left: -100px;
+    animation: floatingGlow 9s ease-in-out infinite;
+}
+
+.breathing-page::after {
+    width: 300px;
+    height: 300px;
+    background: var(--buddy-peach);
+    opacity: .14;
+    right: -120px;
+    bottom: 0;
+    animation: floatingGlow 11s ease-in-out infinite reverse;
+}
+
+
+/* ---------- Main card ---------- */
+
+.breathing-card {
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+    max-width: 760px;
+    border: 1px solid rgba(112,79,104,.10);
+    box-shadow: 0 22px 55px rgba(65,48,60,.10);
+    animation: breathingCardIn .7s ease both;
+}
+
+.breathing-card::before {
+    content: "";
+    position: absolute;
+    width: 180px;
+    height: 180px;
+    border-radius: 50%;
+    background: var(--buddy-lavender-soft);
+    opacity: .45;
+    top: -100px;
+    right: -80px;
+    animation: slowRotate 18s linear infinite;
+}
+
+
+/* ---------- Header ---------- */
+
+.breathing-header {
+    position: relative;
+    z-index: 1;
+}
+
+.breathing-icon {
+    width: 62px;
+    height: 62px;
+    border-radius: 20px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--buddy-lavender-soft);
+    color: var(--buddy-primary);
+    font-size: 1.55rem;
+    margin-bottom: 15px;
+    animation: iconFloat 3.5s ease-in-out infinite;
+    box-shadow: 0 10px 25px rgba(112,79,104,.10);
+}
+
+.breathing-title {
+    font-size: clamp(1.7rem, 3vw, 2.2rem);
+    font-weight: 800;
+    letter-spacing: -.03em;
+}
+
+
+/* ---------- Intro text ---------- */
+
+.breathing-intro {
+    max-width: 580px;
+    margin: 0 auto;
+    line-height: 1.7;
+}
+
+
+/* ---------- Controls ---------- */
+
+.breathing-controls {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 25px;
+    margin-bottom: 25px;
+}
+
+.breathing-control {
+    background: rgba(255,255,255,.78);
+    border: 1px solid rgba(112,79,104,.10);
+    border-radius: 15px;
+    padding: 7px 13px;
+    transition:
+        transform .25s ease,
+        border-color .25s ease,
+        box-shadow .25s ease;
+}
+
+.breathing-control:hover {
+    transform: translateY(-3px);
+    border-color: rgba(112,79,104,.22);
+    box-shadow: 0 8px 18px rgba(65,48,60,.08);
+}
+
+.breathing-control:focus {
+    border-color: var(--buddy-primary);
+    box-shadow: 0 0 0 4px var(--buddy-primary-soft);
+}
+
+
+/* ---------- Breathing stage ---------- */
+
+.breath-stage {
+    position: relative;
+    width: 310px;
+    height: 310px;
+    margin: 15px auto 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+
+/* Outer rings */
+
+.breath-stage::before,
+.breath-stage::after {
+    content: "";
+    position: absolute;
+    border-radius: 50%;
+    border: 1px solid rgba(112,79,104,.12);
+    pointer-events: none;
+}
+
+.breath-stage::before {
+    width: 270px;
+    height: 270px;
+    animation: ringPulse 4s ease-in-out infinite;
+}
+
+.breath-stage::after {
+    width: 220px;
+    height: 220px;
+    border-color: rgba(136,169,149,.20);
+    animation: ringPulse 4s ease-in-out infinite .5s;
+}
+
+
+/* Main circle */
+
+.breath-circle {
+    position: relative;
+    width: 170px;
+    height: 170px;
+    border-radius: 50%;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background:
+        radial-gradient(
+            circle at 35% 30%,
+            rgba(255,255,255,.95),
+            rgba(233,221,232,.9)
+        );
+
+    border: 1px solid rgba(112,79,104,.18);
+
+    box-shadow:
+        0 0 0 12px rgba(154,134,168,.08),
+        0 0 45px rgba(154,134,168,.20),
+        inset 0 0 30px rgba(255,255,255,.8);
+
+    transition:
+        width 1s ease,
+        height 1s ease,
+        transform 1s ease,
+        box-shadow 1s ease,
+        background 1s ease;
+}
+
+
+/* Decorative highlight */
+
+.breath-circle::before {
+    content: "";
+    position: absolute;
+    width: 45px;
+    height: 20px;
+    border-radius: 50%;
+    background: rgba(255,255,255,.55);
+    top: 28px;
+    left: 35px;
+    transform: rotate(-25deg);
+    filter: blur(2px);
+}
+
+
+/* Circle label */
+
+#phaseLabel {
+    position: relative;
+    z-index: 2;
+    font-size: 1rem;
+    font-weight: 800;
+    color: var(--buddy-primary);
+    letter-spacing: .03em;
+}
+
+
+/* ---------- Countdown ---------- */
+
+.breath-countdown {
+    font-size: 2.6rem;
+    font-weight: 800;
+    color: var(--buddy-primary);
+    min-height: 48px;
+    margin-top: 5px;
+    animation: numberFade .3s ease;
+}
+
+.breath-round-info {
+    min-height: 24px;
+}
+
+
+/* ---------- Buttons ---------- */
+
+.breath-action-btn {
+    min-width: 145px;
+    transition:
+        transform .3s ease,
+        box-shadow .3s ease;
+}
+
+.breath-action-btn:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 25px rgba(80,55,72,.15);
+}
+
+#startBtn {
+    position: relative;
+    overflow: hidden;
+}
+
+#startBtn::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 70%;
+    height: 100%;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255,255,255,.4),
+        transparent
+    );
+    transform: skewX(-20deg);
+}
+
+#startBtn:hover::after {
+    animation: buttonShine .8s ease;
+}
+
+
+/* ---------- Safety note ---------- */
+
+.breathing-note {
+    max-width: 560px;
+    margin: 22px auto 0;
+    padding: 12px 16px;
+    border-radius: 15px;
+    background: var(--buddy-cream);
+    border: 1px solid rgba(112,79,104,.07);
+    line-height: 1.6;
+    transition: transform .3s ease;
+}
+
+.breathing-note:hover {
+    transform: translateY(-2px);
+}
+
+
+/* =========================================================
+   OPTIONAL ACTIVE VISUAL STATES
+   These classes can also be used by JS later if needed.
+   ========================================================= */
+
+.breath-circle.inhale {
+    width: 225px;
+    height: 225px;
+    background:
+        radial-gradient(
+            circle at 35% 30%,
+            #ffffff,
+            var(--buddy-sage-soft)
+        );
+    box-shadow:
+        0 0 0 18px rgba(136,169,149,.08),
+        0 0 65px rgba(136,169,149,.28),
+        inset 0 0 35px rgba(255,255,255,.8);
+}
+
+.breath-circle.exhale {
+    width: 145px;
+    height: 145px;
+    background:
+        radial-gradient(
+            circle at 35% 30%,
+            #ffffff,
+            var(--buddy-lavender-soft)
+        );
+    box-shadow:
+        0 0 0 9px rgba(154,134,168,.06),
+        0 0 35px rgba(154,134,168,.20),
+        inset 0 0 25px rgba(255,255,255,.8);
+}
+
+
+/* =========================================================
+   ANIMATIONS
+   ========================================================= */
+
+@keyframes breathingCardIn {
+
+    from {
+        opacity: 0;
+        transform: translateY(25px) scale(.98);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+
+}
+
+@keyframes floatingGlow {
+
+    0%, 100% {
+        transform: translate(0, 0) scale(1);
+    }
+
+    50% {
+        transform: translate(20px, -20px) scale(1.08);
+    }
+
+}
+
+@keyframes iconFloat {
+
+    0%, 100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-7px);
+    }
+
+}
+
+@keyframes ringPulse {
+
+    0%, 100% {
+        transform: scale(.96);
+        opacity: .6;
+    }
+
+    50% {
+        transform: scale(1.04);
+        opacity: 1;
+    }
+
+}
+
+@keyframes slowRotate {
+
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+
+}
+
+@keyframes numberFade {
+
+    from {
+        opacity: .4;
+        transform: scale(.9);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+}
+
+@keyframes buttonShine {
+
+    from {
+        left: -100%;
+    }
+
+    to {
+        left: 140%;
+    }
+
+}
+
+
+/* ---------- Responsive ---------- */
+
+@media (max-width: 575px) {
+
+    .breathing-page {
+        padding-top: 10px;
+    }
+
+    .breathing-card {
+        padding: 24px !important;
+        border-radius: 24px;
+    }
+
+    .breath-stage {
+        width: 270px;
+        height: 270px;
+    }
+
+    .breath-stage::before {
+        width: 235px;
+        height: 235px;
+    }
+
+    .breath-stage::after {
+        width: 195px;
+        height: 195px;
+    }
+
+    .breath-circle {
+        width: 145px;
+        height: 145px;
+    }
+
+    .breath-circle.inhale {
+        width: 195px;
+        height: 195px;
+    }
+
+    .breath-circle.exhale {
+        width: 125px;
+        height: 125px;
+    }
+
+}
+
+
+/* ---------- Reduced motion ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+
+    *,
+    *::before,
+    *::after {
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: .01ms !important;
+    }
+
+}
+</style>
+
+
+<div class="breathing-page">
+
+    <div class="card-soft breathing-card p-4 p-md-5 text-center">
+
+        <!-- Header -->
+
+        <div class="breathing-header">
+
+            <div class="breathing-icon">
+                <i class="bi bi-wind"></i>
+            </div>
+
+            <h3 class="breathing-title page-title mb-2">
+                Breathing Exercise
+            </h3>
+
+            <p class="text-muted-soft breathing-intro mb-0">
+                Follow the circle and breathe at a comfortable pace.
+                You can stop whenever you need to.
+            </p>
+
+        </div>
+
+
+        <!-- Controls -->
+
+        <div class="breathing-controls">
+
+            <select
+                id="pattern"
+                class="form-select form-select-sm breathing-control"
+                aria-label="Breathing pattern">
+
+                <option value="4,4,4,4">
+                    Box breathing (4-4-4-4)
+                </option>
+
+                <option value="4,0,6,0">
+                    Relaxing 4-6
+                </option>
+
+                <option value="4,7,8,0">
+                    4-7-8 breathing
+                </option>
+
+            </select>
+
+
+            <select
+                id="rounds"
+                class="form-select form-select-sm breathing-control"
+                aria-label="Rounds">
+
+                <option value="4">
+                    4 rounds
+                </option>
+
+                <option value="6" selected>
+                    6 rounds
+                </option>
+
+                <option value="10">
+                    10 rounds
+                </option>
+
+            </select>
+
+        </div>
+
+
+        <!-- Breathing Visual -->
+
+        <div class="breath-stage">
+
+            <div
+                class="breath-circle"
+                id="circle">
+
+                <span id="phaseLabel">
+                    Ready
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <!-- Countdown -->
+
+        <div
+            class="fs-3 fw-bold breath-countdown"
+            id="countdown">
+
+            &nbsp;
+
+        </div>
+
+
+        <!-- Round Info -->
+
+        <div
+            class="small text-muted-soft breath-round-info mb-3"
+            id="roundInfo">
+
+            &nbsp;
+
+        </div>
+
+
+        <!-- Actions -->
+
+        <div class="d-flex flex-wrap justify-content-center gap-2">
+
+            <button
+                class="btn btn-primary btn-lg rounded-pill
+                       px-5 breath-action-btn"
+                id="startBtn"
+                type="button">
+
+                <i class="bi bi-play-fill me-1"></i>
+                Start
+
+            </button>
+
+
+            <button
+                class="btn btn-outline-secondary btn-lg
+                       rounded-pill px-4 breath-action-btn d-none"
+                id="stopBtn"
+                type="button">
+
+                <i class="bi bi-stop-fill me-1"></i>
+                Stop
+
+            </button>
+
+        </div>
+
+
+        <!-- Safety Note -->
+
+        <div class="breathing-note small text-muted-soft">
+
+            <i class="bi bi-info-circle me-1"></i>
+
+            If you feel dizzy or uncomfortable, return to normal
+            breathing. This is a relaxation aid, not medical treatment.
+
+        </div>
+
+    </div>
+
+</div>
+
+
+{% endblock %}
+
+
+{% block extra_js %}
+
+<script src="{% static 'js/breathing.js' %}"></script>
+
+{% endblock %}

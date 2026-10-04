@@ -1,0 +1,133 @@
+{% extends "base.html" %}
+
+{% block title %}Chat History - AI Psych Buddy{% endblock %}
+
+{% block content %}
+
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+
+  <div>
+    <span class="small fw-bold text-uppercase"
+          style="color:var(--buddy-coral);letter-spacing:.12em;">
+      Your conversations
+    </span>
+
+    <h2 class="page-title mb-1 mt-2">
+      Chat History
+    </h2>
+
+    <p class="text-muted-soft mb-0">
+      Revisit your previous conversations whenever you need them.
+    </p>
+
+  </div>
+
+  <form method="post" action="{% url 'chat:new' %}">
+    {% csrf_token %}
+
+    <button
+      class="btn btn-primary rounded-pill px-4"
+      type="submit">
+
+      <i class="bi bi-plus-lg me-1"></i>
+      New Conversation
+
+    </button>
+
+  </form>
+
+</div>
+
+<div class="card-soft p-2">
+
+{% for c in conversations %}
+
+  <div class="d-flex align-items-center gap-3 p-3 {% if not forloop.last %}border-bottom{% endif %}">
+
+    <!-- Conversation icon -->
+    <div class="icon-bubble bubble-rose flex-shrink-0"
+         style="width:44px;height:44px;font-size:1rem;">
+      <i class="bi bi-chat-heart"></i>
+    </div>
+
+    <!-- Conversation -->
+    <a
+      href="{% url 'chat:detail' c.pk %}"
+      class="text-decoration-none text-reset flex-grow-1 text-truncate me-2">
+
+      <div class="fw-bold text-truncate mb-1">
+        {{ c.title }}
+      </div>
+
+      <div class="small text-muted-soft">
+        <i class="bi bi-calendar3 me-1"></i>
+        Started {{ c.created_at|date:"M d, Y" }}
+
+        <span class="mx-1">&middot;</span>
+
+        <i class="bi bi-clock me-1"></i>
+        Updated {{ c.updated_at|timesince }} ago
+      </div>
+
+    </a>
+
+    <!-- Delete -->
+    <form
+      method="post"
+      action="{% url 'chat:delete' c.pk %}"
+      onsubmit="return confirm('Delete this conversation permanently?');"
+      class="m-0">
+
+      {% csrf_token %}
+
+      <button
+        class="btn btn-sm btn-outline-danger rounded-pill"
+        type="submit"
+        aria-label="Delete conversation"
+        title="Delete conversation">
+
+        <i class="bi bi-trash"></i>
+
+      </button>
+
+    </form>
+
+  </div>
+
+{% empty %}
+
+  <div class="text-center p-5">
+
+    <div class="icon-bubble bubble-lavender mx-auto mb-3">
+      <i class="bi bi-chat-square-heart"></i>
+    </div>
+
+    <h5 class="fw-bold mb-2">
+      No conversations yet
+    </h5>
+
+    <p class="text-muted-soft mb-4">
+      Your conversations will appear here after you start chatting.
+    </p>
+
+    <form method="post" action="{% url 'chat:new' %}">
+      {% csrf_token %}
+
+      <button
+        class="btn btn-primary rounded-pill px-4"
+        type="submit">
+
+        <i class="bi bi-chat-heart me-1"></i>
+        Start Your First Chat
+
+      </button>
+
+    </form>
+
+  </div>
+
+{% endfor %}
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,361 @@
+{% extends "base.html" %}
+
+{% block title %}Exercises &amp; Games - AI Psych Buddy{% endblock %}
+
+{% block content %}
+
+<div class="container py-4">
+
+  <!-- Page Header -->
+  <div class="text-center mb-5 animate-fade-up">
+
+    <div class="brand-icon mx-auto mb-3" style="width:54px; height:54px; font-size:1.8rem;">
+      <i class="bi bi-brain"></i>
+    </div>
+
+    <h2 class="page-title fw-extrabold mb-2">
+      Wellness Exercises &amp; Stress Games
+    </h2>
+
+    <p class="text-muted mx-auto mb-0" style="max-width: 680px;">
+      Take a mindful moment for yourself with gentle self-reflection tools, sensory grounding, guided breathing, and interactive stress-release games.
+    </p>
+
+  </div>
+
+
+  <!-- Primary Core Exercises Grid -->
+  <div class="row g-4 mb-5 animate-fade-up">
+
+    <!-- CBT Reflection -->
+    <div class="col-md-4">
+      <a href="{% url 'exercises:cbt_new' %}" class="text-decoration-none text-reset">
+        <div class="card-soft card-hover p-4 h-100 d-flex flex-column justify-content-between">
+          <div>
+            <div class="icon-bubble bubble-lavender mb-3">
+              <i class="bi bi-journal-text"></i>
+            </div>
+            <h5 class="fw-bold mb-2">CBT-Style Reflection</h5>
+            <p class="text-muted small mb-3" style="line-height:1.6;">
+              Explore difficult thoughts step-by-step, evaluate evidence, and construct balanced, healthy perspectives.
+            </p>
+          </div>
+          <span class="small fw-bold text-primary">
+            Start CBT Exercise <i class="bi bi-arrow-right ms-1"></i>
+          </span>
+        </div>
+      </a>
+    </div>
+
+    <!-- Grounding -->
+    <div class="col-md-4">
+      <a href="{% url 'exercises:grounding_list' %}" class="text-decoration-none text-reset">
+        <div class="card-soft card-hover p-4 h-100 d-flex flex-column justify-content-between">
+          <div>
+            <div class="icon-bubble bubble-teal mb-3">
+              <i class="bi bi-tree-fill"></i>
+            </div>
+            <h5 class="fw-bold mb-2">5-4-3-2-1 Sensory Grounding</h5>
+            <p class="text-muted small mb-3" style="line-height:1.6;">
+              Pull your brain out of panic loops by connecting with your 5 physical senses in the present moment.
+            </p>
+          </div>
+          <span class="small fw-bold text-primary">
+            Explore Grounding <i class="bi bi-arrow-right ms-1"></i>
+          </span>
+        </div>
+      </a>
+    </div>
+
+    <!-- Breathing -->
+    <div class="col-md-4">
+      <a href="{% url 'exercises:breathing' %}" class="text-decoration-none text-reset">
+        <div class="card-soft card-hover p-4 h-100 d-flex flex-column justify-content-between">
+          <div>
+            <div class="icon-bubble bubble-sage mb-3">
+              <i class="bi bi-wind"></i>
+            </div>
+            <h5 class="fw-bold mb-2">Guided Breathing Timers</h5>
+            <p class="text-muted small mb-3" style="line-height:1.6;">
+              Visual animated expanding halos tailored for Box Breathing (4s-4s-4s-4s) and 4-7-8 Relaxation.
+            </p>
+          </div>
+          <span class="small fw-bold text-primary">
+            Start Breathing <i class="bi bi-arrow-right ms-1"></i>
+          </span>
+        </div>
+      </a>
+    </div>
+
+  </div>
+
+
+  <!-- Interactive Stress Release Mini-Games Hub -->
+  <section class="mb-5 animate-fade-up">
+
+    <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-4">
+      <div>
+        <span class="badge bg-primary-subtle text-primary fw-bold rounded-pill px-3 py-1 mb-1 text-uppercase">
+          🎮 Interactive Arcade
+        </span>
+        <h3 class="fw-bold mb-0">Stress Release Mini-Games</h3>
+      </div>
+      <span class="small text-muted fw-bold">Instant Tension Relievers</span>
+    </div>
+
+    <div class="row g-4">
+
+      <!-- Game 1: Bubble Wrap Pop -->
+      <div class="col-lg-6">
+        <div class="card-soft p-4 h-100 text-center d-flex flex-column justify-content-between">
+          <div>
+            <div class="d-flex align-items-center justify-content-center gap-2 mb-2">
+              <div class="icon-bubble bubble-coral me-1" style="width:40px; height:40px; font-size:1.2rem;">
+                <i class="bi bi-grid-3x3-gap-fill"></i>
+              </div>
+              <h4 class="fw-bold mb-0">Bubble Wrap Pop</h4>
+            </div>
+            <p class="small text-muted mb-3">
+              Pop satisfying glowing bubbles to instantly release hand &amp; brain tension!
+            </p>
+          </div>
+
+          <div class="my-3">
+            <div id="bubbleWrapGrid" class="bubble-wrap-grid mb-3">
+              <!-- 25 Bubble cells inserted via JS -->
+            </div>
+
+            <div id="wrapWinMessage" class="alert alert-success rounded-4 d-none py-2 px-3 fw-bold small">
+              🎉 All Tension Popped! Great Job Releasing Stress!
+            </div>
+          </div>
+
+          <div class="d-flex justify-content-between align-items-center pt-2 border-top">
+            <small class="fw-bold text-muted" id="wrapScoreText">Popped: 0 / 25</small>
+            <button id="resetWrapBtn" class="btn btn-sm btn-outline-primary rounded-pill px-3 fw-bold">
+              <i class="bi bi-arrow-counterclockwise me-1"></i> Reset Wrap
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Game 2: Zen Memory Match -->
+      <div class="col-lg-6">
+        <div class="card-soft p-4 h-100 text-center d-flex flex-column justify-content-between">
+          <div>
+            <div class="d-flex align-items-center justify-content-center gap-2 mb-2">
+              <div class="icon-bubble bubble-sage me-1" style="width:40px; height:40px; font-size:1.2rem;">
+                <i class="bi bi-flower1"></i>
+              </div>
+              <h4 class="fw-bold mb-0">Zen Mindful Match</h4>
+            </div>
+            <p class="small text-muted mb-3">
+              Match peaceful pairs to reveal calm CBT affirmations and focus your mind.
+            </p>
+          </div>
+
+          <div class="my-3">
+            <div id="zenCardGrid" class="zen-card-grid mb-3">
+              <!-- 16 Memory cards inserted via JS -->
+            </div>
+
+            <div id="zenAffirmationText" class="fst-italic text-success fw-bold small min-h-24">
+              Tap cards to find pairs!
+            </div>
+          </div>
+
+          <div class="d-flex justify-content-between align-items-center pt-2 border-top">
+            <small class="fw-bold text-muted" id="zenScoreText">Matched: 0 / 8 Pairs</small>
+            <button id="resetZenBtn" class="btn btn-sm btn-outline-primary rounded-pill px-3 fw-bold">
+              <i class="bi bi-arrow-counterclockwise me-1"></i> New Game
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- Recent Reflections Activity List -->
+  <section class="card-soft p-4 p-md-5 mb-4 animate-fade-up">
+
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+      <div>
+        <span class="small fw-bold text-uppercase" style="color:var(--buddy-coral); letter-spacing:.08em;">
+          Your History
+        </span>
+        <h5 class="fw-bold mb-0 mt-1">Recent CBT Reflections</h5>
+      </div>
+
+      <a href="{% url 'exercises:cbt_list' %}" class="btn btn-sm btn-outline-primary rounded-pill px-3 fw-bold">
+        View All <i class="bi bi-arrow-right ms-1"></i>
+      </a>
+    </div>
+
+    {% for r in recent_reflections %}
+      <a href="{% url 'exercises:cbt_detail' r.pk %}" class="d-block text-decoration-none text-reset py-3 border-bottom">
+        <div class="d-flex justify-content-between align-items-start gap-3">
+          <div class="text-truncate">
+            <span class="d-block text-truncate fw-bold text-primary">
+              {{ r.automatic_thought|truncatechars:90 }}
+            </span>
+            <span class="small text-muted">CBT Reflection</span>
+          </div>
+          <span class="small text-muted text-nowrap">{{ r.created_at|date:"M d, Y" }}</span>
+        </div>
+      </a>
+    {% empty %}
+      <div class="text-center py-4">
+        <div class="icon-bubble bubble-sage mx-auto mb-3">
+          <i class="bi bi-journal-heart"></i>
+        </div>
+        <p class="fw-bold mb-1">No reflections logged yet</p>
+        <p class="text-muted small mb-0">Your completed CBT reflections will appear here.</p>
+      </div>
+    {% endfor %}
+
+  </section>
+
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+
+  function playPopSound() {
+    try {
+      const ctx = new (window.AudioContext || window.webkitAudioContext)();
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(450, ctx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(140, ctx.currentTime + 0.08);
+      gain.gain.setValueAtTime(0.25, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.08);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start();
+      osc.stop(ctx.currentTime + 0.09);
+    } catch(e){}
+  }
+
+  // Bubble Wrap Game
+  const wrapGrid = document.getElementById('bubbleWrapGrid');
+  const wrapScoreText = document.getElementById('wrapScoreText');
+  const resetWrapBtn = document.getElementById('resetWrapBtn');
+  const wrapWinMessage = document.getElementById('wrapWinMessage');
+
+  if (wrapGrid) {
+    let poppedWrapCount = 0;
+    function initBubbleWrap() {
+      wrapGrid.innerHTML = '';
+      poppedWrapCount = 0;
+      wrapScoreText.textContent = 'Popped: 0 / 25';
+      if (wrapWinMessage) wrapWinMessage.classList.add('d-none');
+
+      for (let i = 0; i < 25; i++) {
+        const cell = document.createElement('div');
+        cell.className = 'bubble-wrap-cell';
+        cell.addEventListener('click', function() {
+          if (!cell.classList.contains('popped')) {
+            playPopSound();
+            cell.classList.add('popped');
+            poppedWrapCount++;
+            wrapScoreText.textContent = `Popped: ${poppedWrapCount} / 25`;
+            if (poppedWrapCount === 25 && wrapWinMessage) {
+              wrapWinMessage.classList.remove('d-none');
+            }
+          }
+        });
+        wrapGrid.appendChild(cell);
+      }
+    }
+    initBubbleWrap();
+    if (resetWrapBtn) resetWrapBtn.addEventListener('click', initBubbleWrap);
+  }
+
+  // Zen Memory Match Game
+  const zenGrid = document.getElementById('zenCardGrid');
+  const zenAffirmation = document.getElementById('zenAffirmationText');
+  const zenScoreText = document.getElementById('zenScoreText');
+  const resetZenBtn = document.getElementById('resetZenBtn');
+
+  if (zenGrid) {
+    const zenIcons = ['🧠', '🌿', '☁️', '🌸', '🕊️', '☀️', '🌊', '💡'];
+    const zenAffirmations = [
+      "I am grounded & in control.",
+      "My mind is peaceful & clear.",
+      "Tension is leaving my body.",
+      "I embrace quiet stillness.",
+      "Peace surrounds me today.",
+      "I breathe in quiet strength.",
+      "I am safe in this present moment.",
+      "I release what I cannot control."
+    ];
+
+    let flippedCards = [];
+    let matchedPairs = 0;
+
+    function initZenGame() {
+      zenGrid.innerHTML = '';
+      flippedCards = [];
+      matchedPairs = 0;
+      zenScoreText.textContent = 'Matched: 0 / 8 Pairs';
+      zenAffirmation.textContent = 'Tap cards to find matching peace pairs!';
+
+      const deck = [...zenIcons, ...zenIcons].sort(() => Math.random() - 0.5);
+
+      deck.forEach((icon, idx) => {
+        const card = document.createElement('div');
+        card.className = 'zen-card';
+        card.setAttribute('data-icon', icon);
+        card.textContent = '❓';
+
+        card.addEventListener('click', function() {
+          if (card.classList.contains('flipped') || card.classList.contains('matched') || flippedCards.length >= 2) return;
+
+          playPopSound();
+          card.classList.add('flipped');
+          card.textContent = icon;
+          flippedCards.push(card);
+
+          if (flippedCards.length === 2) {
+            const [c1, c2] = flippedCards;
+            if (c1.getAttribute('data-icon') === c2.getAttribute('data-icon')) {
+              c1.classList.add('matched');
+              c2.classList.add('matched');
+              matchedPairs++;
+              zenScoreText.textContent = `Matched: ${matchedPairs} / 8 Pairs`;
+              zenAffirmation.textContent = zenAffirmations[matchedPairs - 1] || "Peaceful match!";
+              flippedCards = [];
+
+              if (matchedPairs === 8) {
+                zenAffirmation.textContent = "🎉 Outstanding! Your mind is deeply serene & centered.";
+              }
+            } else {
+              setTimeout(() => {
+                c1.classList.remove('flipped');
+                c2.classList.remove('flipped');
+                c1.textContent = '❓';
+                c2.textContent = '❓';
+                flippedCards = [];
+              }, 900);
+            }
+          }
+        });
+
+        zenGrid.appendChild(card);
+      });
+    }
+
+    initZenGame();
+    if (resetZenBtn) resetZenBtn.addEventListener('click', initZenGame);
+  }
+
+});
+</script>
+{% endblock %}

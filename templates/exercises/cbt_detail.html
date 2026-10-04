@@ -1,0 +1,525 @@
+{% extends "base.html" %}
+
+{% block title %}CBT Reflection - AI Psych Buddy{% endblock %}
+
+{% block content %}
+
+<style>
+/* =========================================================
+   CBT REFLECTION DETAIL
+   ========================================================= */
+
+.reflection-page {
+    position: relative;
+    min-height: 70vh;
+    overflow: hidden;
+    padding-bottom: 30px;
+}
+
+
+/* ---------- Background decoration ---------- */
+
+.reflection-page::before,
+.reflection-page::after {
+    content: "";
+    position: absolute;
+    border-radius: 50%;
+    pointer-events: none;
+    filter: blur(65px);
+    z-index: -1;
+}
+
+.reflection-page::before {
+    width: 250px;
+    height: 250px;
+    background: var(--buddy-lavender);
+    opacity: .12;
+    top: 30px;
+    left: -100px;
+    animation: reflectionFloat 10s ease-in-out infinite;
+}
+
+.reflection-page::after {
+    width: 230px;
+    height: 230px;
+    background: var(--buddy-peach);
+    opacity: .13;
+    right: -90px;
+    bottom: 20px;
+    animation: reflectionFloat 12s ease-in-out infinite reverse;
+}
+
+
+/* ---------- Back link ---------- */
+
+.reflection-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    color: var(--buddy-muted);
+    font-weight: 700;
+    text-decoration: none;
+    transition:
+        color .25s ease,
+        transform .25s ease;
+}
+
+.reflection-back i {
+    transition: transform .25s ease;
+}
+
+.reflection-back:hover {
+    color: var(--buddy-primary);
+    transform: translateX(-3px);
+}
+
+.reflection-back:hover i {
+    transform: translateX(-3px);
+}
+
+
+/* ---------- Main card ---------- */
+
+.reflection-card {
+    position: relative;
+    overflow: hidden;
+    border: 1px solid rgba(112,79,104,.09);
+    box-shadow: 0 22px 55px rgba(65,48,60,.09);
+    animation: reflectionEnter .7s ease both;
+}
+
+.reflection-card::before {
+    content: "";
+    position: absolute;
+    height: 4px;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(
+        90deg,
+        var(--buddy-primary),
+        var(--buddy-lavender),
+        var(--buddy-peach)
+    );
+}
+
+
+/* ---------- Header ---------- */
+
+.reflection-header {
+    position: relative;
+    padding-bottom: 20px;
+    border-bottom: 1px solid rgba(112,79,104,.08);
+}
+
+.reflection-title-wrap {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.reflection-icon {
+    width: 52px;
+    height: 52px;
+    border-radius: 17px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    background: var(--buddy-lavender-soft);
+    color: var(--buddy-primary);
+    font-size: 1.25rem;
+    box-shadow: 0 8px 18px rgba(112,79,104,.08);
+    animation: iconGentleFloat 3.5s ease-in-out infinite;
+}
+
+.reflection-title {
+    font-size: clamp(1.55rem, 3vw, 2rem);
+    font-weight: 800;
+    letter-spacing: -.03em;
+}
+
+.reflection-date {
+    margin-top: 4px;
+}
+
+
+/* ---------- Delete button ---------- */
+
+.delete-btn {
+    transition:
+        transform .25s ease,
+        background .25s ease,
+        box-shadow .25s ease;
+}
+
+.delete-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 7px 16px rgba(180,70,70,.12);
+}
+
+
+/* ---------- Reflection sections ---------- */
+
+.reflection-section {
+    position: relative;
+    padding: 18px 18px 18px 20px;
+    margin-top: 18px;
+    border-radius: 17px;
+    background: rgba(255,249,243,.62);
+    border: 1px solid rgba(112,79,104,.06);
+    transition:
+        transform .3s ease,
+        background .3s ease,
+        box-shadow .3s ease;
+}
+
+.reflection-section::before {
+    content: "";
+    position: absolute;
+    width: 4px;
+    left: 0;
+    top: 17px;
+    bottom: 17px;
+    border-radius: 10px;
+    background: var(--buddy-lavender);
+    opacity: .7;
+}
+
+.reflection-section:hover {
+    transform: translateX(4px);
+    background: #fff;
+    box-shadow: 0 9px 22px rgba(65,48,60,.06);
+}
+
+.reflection-section-title {
+    color: var(--buddy-primary);
+    font-size: .92rem;
+    font-weight: 800;
+    margin-bottom: 7px;
+}
+
+.reflection-section-text {
+    color: var(--buddy-text);
+    line-height: 1.75;
+    margin-bottom: 0;
+}
+
+
+/* ---------- AI Feedback ---------- */
+
+.ai-feedback {
+    position: relative;
+    overflow: hidden;
+    margin-top: 25px;
+    padding: 22px;
+    border-radius: 20px;
+
+    background:
+        radial-gradient(
+            circle at 100% 0%,
+            rgba(154,134,168,.18),
+            transparent 35%
+        ),
+        linear-gradient(
+            145deg,
+            var(--buddy-lavender-soft),
+            #fff9f3
+        );
+
+    border: 1px solid rgba(112,79,104,.10);
+
+    transition:
+        transform .3s ease,
+        box-shadow .3s ease;
+}
+
+.ai-feedback::before {
+    content: "";
+    position: absolute;
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background: rgba(255,255,255,.42);
+    right: -35px;
+    top: -40px;
+}
+
+.ai-feedback:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 14px 30px rgba(65,48,60,.08);
+}
+
+.ai-feedback-header {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+}
+
+.ai-feedback-icon {
+    width: 38px;
+    height: 38px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255,255,255,.72);
+    color: var(--buddy-primary);
+    box-shadow: 0 5px 13px rgba(65,48,60,.07);
+    animation: feedbackPulse 3s ease-in-out infinite;
+}
+
+.ai-feedback-title {
+    font-weight: 800;
+    color: var(--buddy-primary);
+}
+
+.ai-feedback-text {
+    position: relative;
+    z-index: 1;
+    line-height: 1.8;
+    color: var(--buddy-text);
+}
+
+
+/* ---------- Animations ---------- */
+
+@keyframes reflectionEnter {
+    from {
+        opacity: 0;
+        transform: translateY(25px) scale(.985);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+@keyframes reflectionFloat {
+    0%, 100% {
+        transform: translate(0, 0) scale(1);
+    }
+
+    50% {
+        transform: translate(18px, -22px) scale(1.08);
+    }
+}
+
+@keyframes iconGentleFloat {
+    0%, 100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-5px);
+    }
+}
+
+@keyframes feedbackPulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.07);
+    }
+}
+
+
+/* ---------- Responsive ---------- */
+
+@media (max-width: 575px) {
+
+    .reflection-card {
+        border-radius: 22px;
+    }
+
+    .reflection-title-wrap {
+        align-items: flex-start;
+    }
+
+    .reflection-icon {
+        width: 45px;
+        height: 45px;
+        border-radius: 14px;
+    }
+
+    .reflection-section {
+        padding: 16px 15px 16px 18px;
+    }
+
+    .ai-feedback {
+        padding: 18px;
+    }
+
+}
+
+
+/* ---------- Reduced motion ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+
+    *,
+    *::before,
+    *::after {
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: .01ms !important;
+    }
+
+}
+</style>
+
+
+<div class="reflection-page">
+
+    <div class="mx-auto" style="max-width:760px;">
+
+        <!-- Back -->
+
+        <a
+            href="{% url 'exercises:cbt_list' %}"
+            class="reflection-back small">
+
+            <i class="bi bi-arrow-left"></i>
+            All reflections
+
+        </a>
+
+
+        <!-- Main Reflection Card -->
+
+        <div class="card-soft reflection-card p-4 p-md-5 mt-3">
+
+
+            <!-- Header -->
+
+            <div class="reflection-header">
+
+                <div class="d-flex justify-content-between
+                            align-items-start gap-3">
+
+                    <div class="reflection-title-wrap">
+
+                        <div class="reflection-icon">
+
+                            <i class="bi bi-journal-heart"></i>
+
+                        </div>
+
+                        <div>
+
+                            <h3 class="reflection-title mb-0">
+                                Your Reflection
+                            </h3>
+
+                            <div class="reflection-date
+                                        small text-muted-soft">
+
+                                <i class="bi bi-calendar3 me-1"></i>
+                                {{ reflection.created_at|date:"F j, Y" }}
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- Delete -->
+
+                    <form
+                        method="post"
+                        action="{% url 'exercises:cbt_delete' reflection.pk %}"
+                        onsubmit="return confirm('Delete this reflection?');">
+
+                        {% csrf_token %}
+
+                        <button
+                            class="btn btn-sm btn-outline-danger
+                                   rounded-pill delete-btn"
+                            aria-label="Delete"
+                            type="submit">
+
+                            <i class="bi bi-trash me-1"></i>
+                            <span class="d-none d-sm-inline">
+                                Delete
+                            </span>
+
+                        </button>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+
+            <!-- Reflection Content -->
+
+            <div class="mt-2">
+
+                {% for s in sections %}
+
+                    {% if s.text %}
+
+                    <div class="reflection-section">
+
+                        <div class="reflection-section-title">
+                            {{ s.title }}
+                        </div>
+
+                        <p class="reflection-section-text">
+                            {{ s.text|linebreaksbr }}
+                        </p>
+
+                    </div>
+
+                    {% endif %}
+
+                {% endfor %}
+
+            </div>
+
+
+            <!-- AI Feedback -->
+
+            {% if reflection.ai_feedback %}
+
+            <div class="ai-feedback">
+
+                <div class="ai-feedback-header">
+
+                    <div class="ai-feedback-icon">
+
+                        <i class="bi bi-chat-heart"></i>
+
+                    </div>
+
+                    <div class="ai-feedback-title">
+                        A note from Buddy
+                    </div>
+
+                </div>
+
+
+                <div class="ai-feedback-text">
+                    {{ reflection.ai_feedback|linebreaksbr }}
+                </div>
+
+            </div>
+
+            {% endif %}
+
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,831 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}AI Psych Buddy - Empowering Daily Mental Wellness & Stress Relief{% endblock %}
+
+{% block content %}
+
+<!-- Hero Banner: Centered, Animated & Engaging -->
+<section class="hero-commercial text-center mb-5 animate-fade-up">
+  <div class="hero-glow-1"></div>
+  <div class="hero-glow-2"></div>
+  <div class="hero-glow-3"></div>
+
+  <div class="position-relative z-1 max-w-850 mx-auto py-2">
+    
+    <!-- Top Pill Badge -->
+    <div class="mb-4">
+      <span class="badge rounded-pill bg-white px-3.5 py-2.5 shadow-sm fw-bold border"
+            style="color:var(--buddy-primary); font-size:0.92rem; border-color: rgba(92,62,90,0.15) !important;">
+        <i class="bi bi-stars text-warning me-1.5 fs-6"></i>
+        #1 AI Mental Health &amp; Stress Relief Companion
+      </span>
+    </div>
+
+    <!-- Animated Hero Title in Center -->
+    <h1 class="display-3 fw-extrabold mb-3" style="line-height:1.15; color: var(--buddy-text);">
+      A calmer space to <br class="d-none d-md-block"/>
+      <span class="hero-title-gradient">de-stress, reflect &amp; find balance.</span>
+    </h1>
+
+    <p class="lead text-muted mx-auto mb-4" style="max-width:680px; font-size:1.2rem; line-height:1.65;">
+      Experiencing daily stress or overthinking? Talk with your empathetic AI companion, track your daily mood, and play interactive stress-relief mini-games.
+    </p>
+
+    <!-- CTAs -->
+    <div class="d-flex gap-3 justify-content-center flex-wrap mb-4">
+      {% if user.is_authenticated %}
+      <a href="{% url 'chat:home' %}" class="btn btn-primary btn-lg rounded-pill px-5 fw-bold py-3 shadow-lg">
+        <i class="bi bi-chat-dots-fill me-2"></i> Talk to AI Buddy Chat
+      </a>
+      <a href="{% url 'dashboard:home' %}" class="btn btn-outline-primary btn-lg rounded-pill px-4 fw-bold py-3">
+        <i class="bi bi-grid-1x2-fill me-2"></i> Go to Dashboard
+      </a>
+      {% else %}
+      <a href="{% url 'accounts:register' %}" class="btn btn-primary btn-lg rounded-pill px-5 fw-bold py-3 shadow-lg">
+        Get Started Free <i class="bi bi-arrow-right ms-2"></i>
+      </a>
+
+      <a href="#games-arcade" class="btn btn-outline-primary btn-lg rounded-pill px-4 fw-bold py-3">
+        <i class="bi bi-controller me-2 text-warning"></i> Play Stress Games
+      </a>
+      {% endif %}
+    </div>
+
+    <!-- Quick Feature Chips / Trust Badges -->
+    <div class="d-flex justify-content-center flex-wrap gap-3 pt-2">
+      <span class="badge bg-white text-dark rounded-pill px-3 py-2 shadow-sm border fw-bold" style="font-size:0.85rem; color:var(--buddy-text)!important;">
+        <i class="bi bi-chat-heart-fill me-1 text-danger"></i> 24/7 AI Companion
+      </span>
+
+      <span class="badge bg-white text-dark rounded-pill px-3 py-2 shadow-sm border fw-bold" style="font-size:0.85rem; color:var(--buddy-text)!important;">
+        <i class="bi bi-shield-lock-fill me-1" style="color:var(--buddy-sage-dark);"></i> 100% Private &amp; Confidential
+      </span>
+
+      <span class="badge bg-white text-dark rounded-pill px-3 py-2 shadow-sm border fw-bold" style="font-size:0.85rem; color:var(--buddy-text)!important;">
+        <i class="bi bi-controller me-1" style="color:var(--buddy-lavender);"></i> Interactive Stress Release
+      </span>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- Interactive Stress Relief Hub & Floating Stress Balls Playground -->
+<section id="stress-relief" class="stress-playground p-4 p-md-5 mb-5 animate-fade-up">
+
+  <div class="row align-items-center g-4">
+
+    <!-- Left Column: Interactive Floating Stress Balls -->
+    <div class="col-lg-6">
+      <div class="d-flex align-items-center gap-2 mb-2">
+        <span class="badge bg-danger-subtle text-danger fw-bold rounded-pill px-3 py-1">
+          <i class="bi bi-controller me-1"></i> Floating Mind Orbs
+        </span>
+        <span class="small text-muted fw-bold">Tap &amp; Pop Away Anxiety</span>
+      </div>
+
+      <h3 class="fw-bold mb-3">Feeling Stressed or Overwhelmed Right Now?</h3>
+      <p class="text-muted mb-4" style="line-height:1.6;">
+        Touch or drag the floating <strong>Mind Orbs</strong> below to release tension. Each orb pops into a peaceful affirmation!
+      </p>
+
+      <!-- Interactive Canvas Container -->
+      <div id="stressCanvasContainer" class="stress-canvas-container d-flex align-items-center justify-content-center">
+        <div class="text-center p-3 pointer-events-none" style="z-index:10;">
+          <small class="badge bg-white text-dark shadow-sm rounded-pill px-3 py-2 fw-bold opacity-75">
+            <i class="bi bi-hand-index-thumb me-1 text-primary"></i> Click or Drag Orbs to Pop Stress
+          </small>
+        </div>
+      </div>
+
+      <div class="d-flex justify-content-between align-items-center mt-3 px-2">
+        <span class="small text-muted fw-bold" id="popCounter">Orbs Popped: <strong class="text-primary fs-6">0</strong></span>
+        <button id="resetOrbsBtn" class="btn btn-sm btn-outline-secondary rounded-pill px-3 fw-bold">
+          <i class="bi bi-arrow-counterclockwise me-1"></i> Respawn Orbs
+        </button>
+      </div>
+
+    </div>
+
+    <!-- Right Column: Live Guided 4-7-8 Breathing Circle -->
+    <div class="col-lg-6 text-center">
+
+      <div class="card-soft p-4 h-100 d-flex flex-column justify-content-between">
+        <div>
+          <span class="badge bg-success-subtle text-success fw-bold rounded-pill px-3 py-1 mb-2">
+            <i class="bi bi-wind me-1"></i> 60-Second Instant Reset
+          </span>
+          <h4 class="fw-bold mb-2">Guided Deep Breathing</h4>
+          <p class="small text-muted mb-4">
+            Follow the expanding circle: <strong>Inhale for 4s</strong>, <strong>Hold for 7s</strong>, <strong>Exhale for 8s</strong>.
+          </p>
+        </div>
+
+        <!-- Breathing Circle -->
+        <div class="my-4 position-relative">
+          <div id="homeBreathingRing" class="home-breathing-ring">
+            <span id="breathPhaseText" class="fs-4">Ready</span>
+            <small id="breathTimerText" class="opacity-75 font-monospace fw-bold fs-6">Click Start</small>
+          </div>
+        </div>
+
+        <div>
+          <button id="startHomeBreathingBtn" class="btn btn-primary rounded-pill px-4 fw-bold">
+            <i class="bi bi-play-fill me-1"></i> Start 60s Breathing Session
+          </button>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
+
+
+<!-- Interactive Stress Relief Games Arcade -->
+<section id="games-arcade" class="mb-5 animate-fade-up">
+
+  <div class="text-center mb-4">
+    <span class="badge bg-primary-subtle text-primary fw-bold rounded-pill px-3 py-1 mb-2 text-uppercase" style="letter-spacing:0.08em;">
+      🎮 Stress Release Games
+    </span>
+    <h2 class="fw-extrabold mb-2">Interactive Stress Relief Arcade</h2>
+    <p class="text-muted max-w-600 mx-auto">
+      Engaging mini-games engineered to distract from anxiety, soothe overthinking, and boost positive neurotransmitters.
+    </p>
+  </div>
+
+  <div class="row g-4">
+
+    <!-- Game 1: Bubble Wrap Pop -->
+    <div class="col-lg-4 col-md-6">
+      <div class="card-soft p-4 h-100 text-center d-flex flex-column justify-content-between">
+        <div>
+          <h4 class="fw-bold mb-2"><i class="bi bi-grid-3x3-gap-fill me-2 text-coral"></i>Bubble Wrap Pop</h4>
+          <p class="small text-muted mb-3">
+            Pop satisfying glowing bubbles to instantly release hand &amp; brain tension!
+          </p>
+        </div>
+
+        <div class="my-3">
+          <div id="bubbleWrapGrid" class="bubble-wrap-grid mb-3">
+            <!-- 25 Tactile Bubble cells generated -->
+          </div>
+
+          <div id="wrapWinMessage" class="alert alert-success rounded-4 d-none py-2 px-3 fw-bold small">
+            🎉 All Tension Popped! Great Job Releasing Stress!
+          </div>
+        </div>
+
+        <div class="d-flex justify-content-between align-items-center pt-2 border-top">
+          <small class="fw-bold text-muted" id="wrapScoreText">Popped: 0 / 25</small>
+          <button id="resetWrapBtn" class="btn btn-sm btn-outline-primary rounded-pill px-3 fw-bold">
+            <i class="bi bi-arrow-counterclockwise me-1"></i> Reset Wrap
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Game 2: Zen Memory Match -->
+    <div class="col-lg-4 col-md-6">
+      <div class="card-soft p-4 h-100 text-center d-flex flex-column justify-content-between">
+        <div>
+          <h4 class="fw-bold mb-2"><i class="bi bi-flower1 me-2 text-success"></i>Zen Mindful Match</h4>
+          <p class="small text-muted mb-3">
+            Match peaceful pairs to reveal calm CBT affirmations and focus your mind.
+          </p>
+        </div>
+
+        <div class="my-3">
+          <div id="zenCardGrid" class="zen-card-grid mb-3">
+            <!-- 16 Memory cards inserted via JS -->
+          </div>
+
+          <div id="zenAffirmationText" class="fst-italic text-success fw-bold small min-h-24">
+            Tap cards to find pairs!
+          </div>
+        </div>
+
+        <div class="d-flex justify-content-between align-items-center pt-2 border-top">
+          <small class="fw-bold text-muted" id="zenScoreText">Matched: 0 / 8 Pairs</small>
+          <button id="resetZenBtn" class="btn btn-sm btn-outline-primary rounded-pill px-3 fw-bold">
+            <i class="bi bi-arrow-counterclockwise me-1"></i> New Game
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Game 3: Stress Thought Smasher -->
+    <div class="col-lg-4 col-md-12">
+      <div class="card-soft p-4 h-100 text-center d-flex flex-column justify-content-between">
+        <div>
+          <h4 class="fw-bold mb-2"><i class="bi bi-lightning-charge-fill me-2 text-warning"></i>Thought Smasher</h4>
+          <p class="small text-muted mb-3">
+            Tap stress thoughts as they pop up to smash them into positive energy!
+          </p>
+        </div>
+
+        <div class="my-3">
+          <div id="smashGrid" class="stress-smash-grid mb-3">
+            <!-- 9 Smash targets -->
+          </div>
+
+          <div id="smashAffirmation" class="fst-italic text-primary fw-bold small min-h-24">
+            Click Start to smash stress targets!
+          </div>
+        </div>
+
+        <div class="d-flex justify-content-between align-items-center pt-2 border-top">
+          <small class="fw-bold text-muted" id="smashScoreText">Smashed: 0</small>
+          <button id="startSmashBtn" class="btn btn-sm btn-outline-primary rounded-pill px-3 fw-bold">
+            <i class="bi bi-play-fill me-1"></i> Start Game
+          </button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</section>
+
+
+<!-- Quick Mental Health Check-In Selector -->
+<section class="mb-5 text-center animate-fade-up">
+
+  <div class="max-w-700 mx-auto mb-4">
+    <span class="badge bg-primary-subtle text-primary fw-bold rounded-pill px-3 py-1 mb-2 text-uppercase" style="letter-spacing:0.08em;">
+      Quick Relief Check-in
+    </span>
+    <h2 class="fw-extrabold mb-2">What are you feeling right now?</h2>
+    <p class="text-muted">Select your current state for instant CBT-aligned advice:</p>
+  </div>
+
+  <div class="d-flex justify-content-center flex-wrap gap-3 max-w-900 mx-auto">
+
+    <button class="btn btn-outline-primary rounded-4 p-3 flex-grow-1 checkin-btn" data-state="overthinking">
+      <div class="fs-2 mb-1">🤯</div>
+      <strong class="d-block">Overthinking</strong>
+      <small class="text-muted">Constant thoughts racing</small>
+    </button>
+
+    <button class="btn btn-outline-primary rounded-4 p-3 flex-grow-1 checkin-btn" data-state="anxious">
+      <div class="fs-2 mb-1">😰</div>
+      <strong class="d-block">Anxious / Panic</strong>
+      <small class="text-muted">Chest tight or restless</small>
+    </button>
+
+    <button class="btn btn-outline-primary rounded-4 p-3 flex-grow-1 checkin-btn" data-state="exhausted">
+      <div class="fs-2 mb-1">🔋</div>
+      <strong class="d-block">Burnout / Low Energy</strong>
+      <small class="text-muted">Drained and overwhelmed</small>
+    </button>
+
+    <button class="btn btn-outline-primary rounded-4 p-3 flex-grow-1 checkin-btn" data-state="lonely">
+      <div class="fs-2 mb-1">🌧️</div>
+      <strong class="d-block">Feeling Down</strong>
+      <small class="text-muted">Need a gentle listener</small>
+    </button>
+
+  </div>
+
+  <!-- Dynamic Response Box -->
+  <div id="checkinResponseBox" class="card-soft max-w-800 mx-auto mt-4 p-4 text-start d-none" style="background:var(--buddy-cream); border-left:4px solid var(--buddy-primary);">
+    <div class="d-flex align-items-center gap-2 mb-2">
+      <i class="bi bi-lightbulb-fill text-warning fs-5"></i>
+      <h6 id="checkinTitle" class="fw-bold mb-0">Personalized Micro-Technique</h6>
+    </div>
+    <p id="checkinText" class="mb-3 text-muted" style="line-height:1.6;"></p>
+    <div class="d-flex gap-2">
+      <a href="{% url 'chat:home' %}" class="btn btn-sm btn-primary rounded-pill px-3 fw-bold">
+        Talk to AI Buddy About This <i class="bi bi-arrow-right ms-1"></i>
+      </a>
+    </div>
+  </div>
+
+</section>
+
+
+<!-- Features Grid: Product Features for Stress Management -->
+<section class="mb-5 animate-fade-up">
+
+  <div class="text-center mb-5">
+    <span class="badge bg-secondary-subtle text-secondary fw-bold rounded-pill px-3 py-1 mb-2 text-uppercase">
+      Comprehensive Toolkit
+    </span>
+    <h2 class="fw-extrabold mb-2">Built for Everyday Stress Relief</h2>
+    <p class="text-muted max-w-600 mx-auto">
+      Science-backed tools engineered to help you pause, reframe thoughts, and cultivate calm habit loops.
+    </p>
+  </div>
+
+  <div class="row g-4">
+
+    <!-- Card 1 -->
+    <div class="col-md-6 col-lg-4">
+      <div class="card-soft card-hover p-4 h-100 d-flex flex-column justify-content-between">
+        <div>
+          <i class="bi bi-brain fs-2 text-primary mb-3 d-block"></i>
+          <h5 class="fw-bold mb-2">24/7 AI Companion</h5>
+          <p class="text-muted small mb-0" style="line-height:1.6;">
+            Empathetic, judgment-free conversations grounded in a curated CBT &amp; mental wellness knowledge base.
+          </p>
+        </div>
+        <div class="mt-3 pt-3 border-top">
+          <small class="fw-bold text-primary"><i class="bi bi-check-circle-fill me-1 text-success"></i> Instant Response</small>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 2 -->
+    <div class="col-md-6 col-lg-4">
+      <div class="card-soft card-hover p-4 h-100 d-flex flex-column justify-content-between">
+        <div>
+          <i class="bi bi-emoji-smile fs-2 text-danger mb-3 d-block"></i>
+          <h5 class="fw-bold mb-2">Daily Mood Analytics</h5>
+          <p class="text-muted small mb-0" style="line-height:1.6;">
+            Log daily feelings in seconds. Track weekly emotional trends and identify key stress triggers over time.
+          </p>
+        </div>
+        <div class="mt-3 pt-3 border-top">
+          <small class="fw-bold text-primary"><i class="bi bi-graph-up me-1"></i> Interactive Chart.js</small>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 3 -->
+    <div class="col-md-6 col-lg-4">
+      <div class="card-soft card-hover p-4 h-100 d-flex flex-column justify-content-between">
+        <div>
+          <i class="bi bi-journal-text fs-2 text-purple mb-3 d-block"></i>
+          <h5 class="fw-bold mb-2">6-Step CBT Reflection</h5>
+          <p class="text-muted small mb-0" style="line-height:1.6;">
+            Deconstruct anxious thought patterns step-by-step to arrive at balanced, objective perspectives.
+          </p>
+        </div>
+        <div class="mt-3 pt-3 border-top">
+          <small class="fw-bold text-primary"><i class="bi bi-stars me-1"></i> Guided Restructuring</small>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 4 -->
+    <div class="col-md-6 col-lg-4">
+      <div class="card-soft card-hover p-4 h-100 d-flex flex-column justify-content-between">
+        <div>
+          <i class="bi bi-tree fs-2 text-teal mb-3 d-block"></i>
+          <h5 class="fw-bold mb-2">5-4-3-2-1 Grounding</h5>
+          <p class="text-muted small mb-0" style="line-height:1.6;">
+            Interactive sensory check-in exercise to pull your mind out of panic mode and back into the present moment.
+          </p>
+        </div>
+        <div class="mt-3 pt-3 border-top">
+          <small class="fw-bold text-primary"><i class="bi bi-eye me-1"></i> Sensory Re-centering</small>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 5 -->
+    <div class="col-md-6 col-lg-4">
+      <div class="card-soft card-hover p-4 h-100 d-flex flex-column justify-content-between">
+        <div>
+          <i class="bi bi-wind fs-2 text-warning mb-3 d-block"></i>
+          <h5 class="fw-bold mb-2">Box &amp; 4-7-8 Breathing</h5>
+          <p class="text-muted small mb-0" style="line-height:1.6;">
+            Visual expanding halos and timer patterns calibrated to regulate heart rate and reduce stress hormones.
+          </p>
+        </div>
+        <div class="mt-3 pt-3 border-top">
+          <small class="fw-bold text-primary"><i class="bi bi-heart-pulse me-1"></i> Physiological Calming</small>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 6 -->
+    <div class="col-md-6 col-lg-4">
+      <div class="card-soft card-hover p-4 h-100 d-flex flex-column justify-content-between">
+        <div>
+          <i class="bi bi-shield-check fs-2 text-success mb-3 d-block"></i>
+          <h5 class="fw-bold mb-2">Safety Guardrails</h5>
+          <p class="text-muted small mb-0" style="line-height:1.6;">
+            Automatic crisis detection screens distress keywords before LLM execution to provide immediate hotline resources.
+          </p>
+        </div>
+        <div class="mt-3 pt-3 border-top">
+          <small class="fw-bold text-primary"><i class="bi bi-shield-fill-check me-1 text-success"></i> Built-in Protection</small>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</section>
+
+
+<!-- Bottom Call-To-Action Banner -->
+<section class="card-soft text-center p-5 mb-4 animate-fade-up" style="background: linear-gradient(135deg, var(--buddy-primary-soft), var(--buddy-peach-soft));">
+  <div class="max-w-700 mx-auto">
+    <h2 class="fw-extrabold mb-3">
+      <i class="bi bi-brain text-primary me-2"></i>Take a quiet moment for yourself today.
+    </h2>
+    <p class="text-muted mb-4 lead">
+      Whether you want to talk through a stressful day, log how you feel, or play interactive stress games.
+    </p>
+
+    <div class="d-flex justify-content-center gap-3 flex-wrap">
+      <a href="{% url 'accounts:register' %}" class="btn btn-primary btn-lg rounded-pill px-5 fw-bold shadow">
+        Create Your Free Account <i class="bi bi-arrow-right ms-2"></i>
+      </a>
+      <a href="{% url 'accounts:login' %}" class="btn btn-outline-primary btn-lg rounded-pill px-4 fw-bold">
+        Log In
+      </a>
+    </div>
+  </div>
+</section>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Global Web Audio Pop Sound Function
+function playPopSound() {
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(460, ctx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(130, ctx.currentTime + 0.08);
+    gain.gain.setValueAtTime(0.28, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.08);
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.start();
+    osc.stop(ctx.currentTime + 0.09);
+  } catch(e){}
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+
+  // --- 1. Interactive Floating Stress Orbs Canvas ---
+  const container = document.getElementById('stressCanvasContainer');
+  const popCounterEl = document.getElementById('popCounter');
+  const resetBtn = document.getElementById('resetOrbsBtn');
+  
+  if (container) {
+    let poppedCount = 0;
+    const affirmations = ["Peace 🕊️", "Calm 🌿", "Breathe 🍃", "Clarity ✨", "Serenity 🌸", "Balance ⚖️", "Focus 💡", "Softness ☁️"];
+    const colors = ["#D96B5D", "#6B9B7A", "#8B739B", "#3E8E8D", "#EE9E80", "#5C3E5A"];
+
+    function createOrbs() {
+      container.querySelectorAll('.stress-ball').forEach(el => el.remove());
+      const containerWidth = container.clientWidth;
+      const containerHeight = container.clientHeight;
+
+      for (let i = 0; i < 7; i++) {
+        const ball = document.createElement('div');
+        ball.className = 'stress-ball';
+        const size = Math.floor(Math.random() * 25) + 65;
+        const color = colors[i % colors.length];
+        
+        ball.style.width = size + 'px';
+        ball.style.height = size + 'px';
+        ball.style.backgroundColor = color;
+        
+        let posX = Math.random() * (containerWidth - size - 20) + 10;
+        let posY = Math.random() * (containerHeight - size - 20) + 10;
+        let vx = (Math.random() - 0.5) * 1.5;
+        let vy = (Math.random() - 0.5) * 1.5;
+
+        ball.style.left = posX + 'px';
+        ball.style.top = posY + 'px';
+        ball.textContent = "Stress";
+
+        container.appendChild(ball);
+
+        ball.addEventListener('click', function(e) {
+          e.stopPropagation();
+          playPopSound();
+          poppedCount++;
+          popCounterEl.innerHTML = `Orbs Popped: <strong class="text-primary fs-6">${poppedCount}</strong>`;
+          
+          ball.style.transform = 'scale(1.4)';
+          ball.style.opacity = '0';
+          
+          const popup = document.createElement('div');
+          popup.className = 'position-absolute fw-bold text-success font-monospace px-3 py-1 bg-white rounded-pill shadow-sm';
+          popup.style.left = posX + 'px';
+          popup.style.top = posY + 'px';
+          popup.style.zIndex = '30';
+          popup.style.fontSize = '0.9rem';
+          popup.textContent = affirmations[Math.floor(Math.random() * affirmations.length)];
+          container.appendChild(popup);
+
+          setTimeout(() => popup.remove(), 1200);
+          setTimeout(() => ball.remove(), 250);
+        });
+
+        function animate() {
+          if (!ball.parentElement) return;
+          posX += vx;
+          posY += vy;
+
+          if (posX <= 5 || posX >= containerWidth - size - 5) vx *= -1;
+          if (posY <= 5 || posY >= containerHeight - size - 5) vy *= -1;
+
+          ball.style.left = posX + 'px';
+          ball.style.top = posY + 'px';
+
+          requestAnimationFrame(animate);
+        }
+        requestAnimationFrame(animate);
+      }
+    }
+
+    createOrbs();
+    if (resetBtn) resetBtn.addEventListener('click', createOrbs);
+  }
+
+  // --- 2. Live 4-7-8 Breathing Session Widget ---
+  const breathRing = document.getElementById('homeBreathingRing');
+  const phaseText = document.getElementById('breathPhaseText');
+  const timerText = document.getElementById('breathTimerText');
+  const startBtn = document.getElementById('startHomeBreathingBtn');
+
+  if (startBtn && breathRing) {
+    let breathingInterval = null;
+    let isRunning = false;
+
+    startBtn.addEventListener('click', function() {
+      if (isRunning) {
+        clearInterval(breathingInterval);
+        isRunning = false;
+        breathRing.className = 'home-breathing-ring';
+        phaseText.textContent = 'Ready';
+        timerText.textContent = 'Click Start';
+        startBtn.innerHTML = '<i class="bi bi-play-fill me-1"></i> Start 60s Breathing Session';
+        return;
+      }
+
+      isRunning = true;
+      startBtn.innerHTML = '<i class="bi bi-stop-fill me-1"></i> Stop Session';
+      
+      const cycle = [
+        { phase: 'Inhale...', class: 'inhale', duration: 4 },
+        { phase: 'Hold...', class: 'hold', duration: 7 },
+        { phase: 'Exhale...', class: 'exhale', duration: 8 }
+      ];
+
+      let cycleIdx = 0;
+      let secondsLeft = cycle[0].duration;
+
+      function updatePhase() {
+        const current = cycle[cycleIdx];
+        breathRing.className = 'home-breathing-ring ' + current.class;
+        phaseText.textContent = current.phase;
+        timerText.textContent = secondsLeft + 's';
+
+        if (secondsLeft <= 1) {
+          cycleIdx = (cycleIdx + 1) % cycle.length;
+          secondsLeft = cycle[cycleIdx].duration;
+        } else {
+          secondsLeft--;
+        }
+      }
+
+      updatePhase();
+      breathingInterval = setInterval(updatePhase, 1000);
+    });
+  }
+
+  // --- 3. Game 1: Bubble Wrap Pop Game ---
+  const wrapGrid = document.getElementById('bubbleWrapGrid');
+  const wrapScoreText = document.getElementById('wrapScoreText');
+  const resetWrapBtn = document.getElementById('resetWrapBtn');
+  const wrapWinMessage = document.getElementById('wrapWinMessage');
+
+  if (wrapGrid) {
+    let poppedWrapCount = 0;
+
+    function initBubbleWrap() {
+      wrapGrid.innerHTML = '';
+      poppedWrapCount = 0;
+      wrapScoreText.textContent = 'Popped: 0 / 25';
+      if (wrapWinMessage) wrapWinMessage.classList.add('d-none');
+
+      for (let i = 0; i < 25; i++) {
+        const cell = document.createElement('div');
+        cell.className = 'bubble-wrap-cell';
+        cell.setAttribute('title', 'Click to Pop!');
+        
+        // Touch & Click Event
+        cell.addEventListener('click', function() {
+          if (!cell.classList.contains('popped')) {
+            playPopSound();
+            cell.classList.add('popped');
+            poppedWrapCount++;
+            wrapScoreText.textContent = `Popped: ${poppedWrapCount} / 25`;
+            if (poppedWrapCount === 25 && wrapWinMessage) {
+              wrapWinMessage.classList.remove('d-none');
+            }
+          }
+        });
+        wrapGrid.appendChild(cell);
+      }
+    }
+
+    initBubbleWrap();
+    if (resetWrapBtn) resetWrapBtn.addEventListener('click', initBubbleWrap);
+  }
+
+  // --- 4. Game 2: Zen Memory Card Game ---
+  const zenGrid = document.getElementById('zenCardGrid');
+  const zenAffirmation = document.getElementById('zenAffirmationText');
+  const zenScoreText = document.getElementById('zenScoreText');
+  const resetZenBtn = document.getElementById('resetZenBtn');
+
+  if (zenGrid) {
+    const zenIcons = ['🧠', '🌿', '☁️', '🌸', '🕊️', '☀️', '🌊', '💡'];
+    const zenAffirmations = [
+      "I am grounded & in control.",
+      "My mind is peaceful & clear.",
+      "Tension is leaving my body.",
+      "I embrace quiet stillness.",
+      "Peace surrounds me today.",
+      "I breathe in quiet strength.",
+      "I am safe in this present moment.",
+      "I release what I cannot control."
+    ];
+
+    let flippedCards = [];
+    let matchedPairs = 0;
+
+    function initZenGame() {
+      zenGrid.innerHTML = '';
+      flippedCards = [];
+      matchedPairs = 0;
+      zenScoreText.textContent = 'Matched: 0 / 8 Pairs';
+      zenAffirmation.textContent = 'Tap cards to find matching peace pairs!';
+
+      const deck = [...zenIcons, ...zenIcons].sort(() => Math.random() - 0.5);
+
+      deck.forEach((icon, idx) => {
+        const card = document.createElement('div');
+        card.className = 'zen-card';
+        card.setAttribute('data-icon', icon);
+        card.textContent = '❓';
+
+        card.addEventListener('click', function() {
+          if (card.classList.contains('flipped') || card.classList.contains('matched') || flippedCards.length >= 2) return;
+
+          playPopSound();
+          card.classList.add('flipped');
+          card.textContent = icon;
+          flippedCards.push(card);
+
+          if (flippedCards.length === 2) {
+            const [c1, c2] = flippedCards;
+            if (c1.getAttribute('data-icon') === c2.getAttribute('data-icon')) {
+              c1.classList.add('matched');
+              c2.classList.add('matched');
+              matchedPairs++;
+              zenScoreText.textContent = `Matched: ${matchedPairs} / 8 Pairs`;
+              zenAffirmation.textContent = zenAffirmations[matchedPairs - 1] || "Peaceful match!";
+              flippedCards = [];
+
+              if (matchedPairs === 8) {
+                zenAffirmation.textContent = "🎉 Outstanding! Your mind is deeply serene & centered.";
+              }
+            } else {
+              setTimeout(() => {
+                c1.classList.remove('flipped');
+                c2.classList.remove('flipped');
+                c1.textContent = '❓';
+                c2.textContent = '❓';
+                flippedCards = [];
+              }, 900);
+            }
+          }
+        });
+
+        zenGrid.appendChild(card);
+      });
+    }
+
+    initZenGame();
+    if (resetZenBtn) resetZenBtn.addEventListener('click', initZenGame);
+  }
+
+  // --- 5. Game 3: Stress Thought Smasher ---
+  const smashGrid = document.getElementById('smashGrid');
+  const smashAffirmation = document.getElementById('smashAffirmation');
+  const smashScoreText = document.getElementById('smashScoreText');
+  const startSmashBtn = document.getElementById('startSmashBtn');
+
+  if (smashGrid) {
+    const stressWords = ["Overthinking", "Doubt 😰", "Fear 🌩️", "Pressure ⚡", "Worry 🌪️", "Tension 💥", "Panic 🚨", "Restless 🌊"];
+    const positiveWords = ["Calm 🌸", "Peace 🕊️", "Focus 💡", "Power ⚡", "Serenity ✨", "Clarity ☀️"];
+    let smashScore = 0;
+    let smashInterval = null;
+
+    function initSmashGrid() {
+      smashGrid.innerHTML = '';
+      for (let i = 0; i < 9; i++) {
+        const cell = document.createElement('div');
+        cell.className = 'smash-cell';
+        cell.setAttribute('data-id', i);
+        smashGrid.appendChild(cell);
+      }
+    }
+
+    initSmashGrid();
+
+    if (startSmashBtn) {
+      let isSmashRunning = false;
+      startSmashBtn.addEventListener('click', function() {
+        if (isSmashRunning) {
+          clearInterval(smashInterval);
+          isSmashRunning = false;
+          startSmashBtn.innerHTML = '<i class="bi bi-play-fill me-1"></i> Start Game';
+          initSmashGrid();
+          return;
+        }
+
+        isSmashRunning = true;
+        smashScore = 0;
+        smashScoreText.textContent = 'Smashed: 0';
+        smashAffirmation.textContent = 'Tap stress targets as they pop up!';
+        startSmashBtn.innerHTML = '<i class="bi bi-stop-fill me-1"></i> Stop';
+
+        smashInterval = setInterval(() => {
+          const cells = smashGrid.querySelectorAll('.smash-cell');
+          cells.forEach(c => {
+            c.className = 'smash-cell';
+            c.innerHTML = '';
+          });
+
+          const randomIdx = Math.floor(Math.random() * 9);
+          const targetCell = cells[randomIdx];
+          const stressWord = stressWords[Math.floor(Math.random() * stressWords.length)];
+
+          targetCell.classList.add('active-stress');
+          targetCell.innerHTML = `<span class="badge bg-danger text-white rounded-pill fs-7">${stressWord}</span>`;
+
+          targetCell.onclick = function() {
+            if (targetCell.classList.contains('active-stress')) {
+              playPopSound();
+              smashScore++;
+              smashScoreText.textContent = `Smashed: ${smashScore}`;
+              const posWord = positiveWords[Math.floor(Math.random() * positiveWords.length)];
+              targetCell.classList.remove('active-stress');
+              targetCell.innerHTML = `<span class="badge bg-success text-white rounded-pill fs-7">${posWord}</span>`;
+              smashAffirmation.textContent = `Smashed ${stressWord} ➡️ ${posWord}!`;
+            }
+          };
+        }, 1200);
+      });
+    }
+  }
+
+  // --- 6. Quick Check-In Selector ---
+  const checkinBtns = document.querySelectorAll('.checkin-btn');
+  const responseBox = document.getElementById('checkinResponseBox');
+  const checkinTitle = document.getElementById('checkinTitle');
+  const checkinText = document.getElementById('checkinText');
+
+  const checkinData = {
+    overthinking: {
+      title: "For Racing Thoughts & Overthinking",
+      text: "Try the **5-4-3-2-1 Sensory Grounding Technique**. Acknowledge 5 things you can see around you right now, 4 things you can physically feel, 3 things you hear, 2 things you smell, and 1 thing you taste. This instantly shifts your brain out of thought loops and back into your body."
+    },
+    anxious: {
+      title: "For High Anxiety or Panic Symptoms",
+      text: "Un-clench your jaw, drop your shoulders away from your ears, and place one hand on your stomach. Practice **Long Exhales**: breathe in for 4 seconds and blow out through your mouth for 8 seconds. Long exhales trigger your vagus nerve to slow your heart rate."
+    },
+    exhausted: {
+      title: "For Burnout & Emotional Exhaustion",
+      text: "Give yourself permission to pause completely for 10 minutes. Turn off notifications, dim bright lights, and remind yourself: *'Resting is productive and necessary for recovery.'* You don't have to fix everything today."
+    },
+    lonely: {
+      title: "When You Need a Gentle Listener",
+      text: "Our **AI Psych Buddy** is available right now for a warm, non-judgmental space to talk about whatever is weighing on your mind. Take a moment to log into your account and share your thoughts freely."
+    }
+  };
+
+  checkinBtns.forEach(btn => {
+    btn.addEventListener('click', function() {
+      const state = this.getAttribute('data-state');
+      const data = checkinData[state];
+      if (data && responseBox) {
+        checkinTitle.textContent = data.title;
+        checkinText.innerHTML = data.text;
+        responseBox.classList.remove('d-none');
+        responseBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
+    });
+  });
+
+});
+</script>
+{% endblock %}

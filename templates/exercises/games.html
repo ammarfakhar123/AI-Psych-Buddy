@@ -1,0 +1,519 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Visual Mindfulness & Spot the Differences - AI Psych Buddy{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+
+  <!-- Header Banner -->
+  <div class="text-center mb-5 animate-fade-up">
+    <div class="d-inline-flex align-items-center justify-content-center p-3 rounded-circle shadow-sm mb-3" style="background:linear-gradient(135deg, var(--buddy-primary), var(--buddy-teal)); width:64px; height:64px; color:#fff;">
+      <i class="bi bi-eye-fill fs-2"></i>
+    </div>
+    <h1 class="page-title fw-extrabold mb-2">Mindful Observation &amp; Visual De-Stress</h1>
+    <p class="text-muted mx-auto mb-3" style="max-width: 720px;">
+      Engage your visual focus to pull your brain out of anxiety loops. Compare tranquil scenes to spot subtle differences, count hidden serene objects, and center your mind in the present moment.
+    </p>
+
+    <!-- Global Sound & Mode Badges -->
+    <div class="d-flex justify-content-center align-items-center flex-wrap gap-3">
+      <button id="globalSoundToggle" class="btn btn-sm btn-outline-secondary rounded-pill px-3 py-1.5 fw-bold shadow-sm">
+        <i class="bi bi-volume-up-fill me-1 text-success" id="soundIcon"></i> Audio Feedback: <span id="soundText">ON</span>
+      </button>
+      <span class="badge rounded-pill bg-teal-subtle text-teal px-3 py-2 fw-bold" style="background:var(--buddy-teal-soft); color:var(--buddy-teal);">
+        <i class="bi bi-check-circle-fill me-1"></i> Visual Focus &amp; Grounding Science
+      </span>
+    </div>
+  </div>
+
+  <!-- Challenge Selector Tabs -->
+  <ul class="nav nav-pills justify-content-center gap-2 mb-5 animate-fade-up border-0" id="visualTabs" role="tablist">
+    <li class="nav-item" role="presentation">
+      <button class="nav-link active rounded-pill px-4 py-2.5 fw-extrabold shadow-sm d-flex align-items-center gap-2" id="tab-diff1-tab" data-bs-toggle="pill" data-bs-target="#tab-diff1" type="button" role="tab">
+        <i class="bi bi-images text-warning"></i> 🔍 Level 1: Spot Differences (Lotus Pond)
+      </button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link rounded-pill px-4 py-2.5 fw-extrabold shadow-sm d-flex align-items-center gap-2" id="tab-diff2-tab" data-bs-toggle="pill" data-bs-target="#tab-diff2" type="button" role="tab">
+        <i class="bi bi-tree-fill text-success"></i> 🌿 Level 2: Spot Differences (Zen Garden)
+      </button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link rounded-pill px-4 py-2.5 fw-extrabold shadow-sm d-flex align-items-center gap-2" id="tab-count-tab" data-bs-toggle="pill" data-bs-target="#tab-count" type="button" role="tab">
+        <i class="bi bi-search text-info"></i> 🌸 Challenge 3: Mindful Object Hunt
+      </button>
+    </li>
+  </ul>
+
+  <!-- Tab Contents -->
+  <div class="tab-content animate-fade-up" id="visualTabsContent">
+
+    <!-- LEVEL 1: SPOT THE DIFFERENCE (LOTUS POND) -->
+    <div class="tab-pane fade show active" id="tab-diff1" role="tabpanel">
+      <div class="card-soft p-4 p-md-5 max-w-1000 mx-auto">
+        
+        <div class="d-flex flex-column flex-md-row align-items-center justify-content-between gap-3 border-bottom pb-3 mb-4">
+          <div>
+            <h3 class="fw-extrabold mb-1">🔍 Level 1: Spot the 5 Differences</h3>
+            <p class="text-muted small mb-0">Compare <strong>Image A (Original)</strong> and <strong>Image B (Modified)</strong>. Click or tap any difference you spot on either image!</p>
+          </div>
+          <div class="d-flex align-items-center gap-3">
+            <span class="badge bg-primary fs-6 px-3 py-2 rounded-pill fw-bold" id="level1ScoreBadge">
+              Differences: 0 / 5
+            </span>
+            <button id="resetLevel1Btn" class="btn btn-outline-primary rounded-pill px-4 fw-bold">
+              <i class="bi bi-arrow-counterclockwise me-1"></i> Reset Scene
+            </button>
+          </div>
+        </div>
+
+        <!-- Hint Banner -->
+        <div id="level1Banner" class="alert alert-info rounded-4 py-2.5 px-3 fw-bold small text-center mb-4 border-0" style="background:var(--buddy-teal-soft); color:var(--buddy-teal);">
+          💡 Tip: Look closely at the lotus flowers, lanterns, floating petals, and background elements!
+        </div>
+
+        <!-- Side-by-Side Comparison Container -->
+        <div class="row g-4 mb-4">
+          
+          <!-- Image A: Original -->
+          <div class="col-md-6">
+            <div class="card p-2 border-0 shadow-sm rounded-4 text-center bg-light">
+              <div class="badge bg-secondary mb-2 align-self-start ms-2 rounded-pill px-3">Image A (Original)</div>
+              <div class="spot-img-wrapper" id="wrapperA_L1">
+                <img src="{% static 'images/pond_scene.png' %}" alt="Original Lotus Pond" class="img-fluid rounded-3 spot-main-img">
+                <!-- Clickable difference hotspots overlay -->
+                <div class="hotspot-overlay" id="overlayA_L1"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Image B: Modified -->
+          <div class="col-md-6">
+            <div class="card p-2 border-0 shadow-sm rounded-4 text-center bg-light">
+              <div class="badge bg-primary mb-2 align-self-start ms-2 rounded-pill px-3">Image B (Spot 5 Differences Here)</div>
+              <div class="spot-img-wrapper" id="wrapperB_L1">
+                <img src="{% static 'images/pond_scene.png' %}" alt="Modified Lotus Pond" class="img-fluid rounded-3 spot-main-img">
+                
+                <!-- Added visual differences overlay on B -->
+                <div class="diff-graphic-item diff-item-1" title="Glowing Lotus Flower">🌸</div>
+                <div class="diff-graphic-item diff-item-2" title="Floating Lantern">🏮</div>
+                <div class="diff-graphic-item diff-item-3" title="Peaceful Butterfly">🦋</div>
+                <div class="diff-graphic-item diff-item-4" title="Golden Zen Star">✨</div>
+                <div class="diff-graphic-item diff-item-5" title="Blossom Petal">🍃</div>
+
+                <!-- Clickable hotspot overlay -->
+                <div class="hotspot-overlay" id="overlayB_L1"></div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Differences Checklist -->
+        <div class="p-3 rounded-4 bg-light border">
+          <h6 class="fw-bold mb-2 text-uppercase text-muted small" style="letter-spacing:0.06em;">Differences Checklist:</h6>
+          <div class="d-flex flex-wrap gap-2" id="checklistL1">
+            <span class="badge bg-white text-muted border rounded-pill px-3 py-2 fw-semibold item-check" data-id="1">1. Glowing Lotus Flower 🌸</span>
+            <span class="badge bg-white text-muted border rounded-pill px-3 py-2 fw-semibold item-check" data-id="2">2. Floating Paper Lantern 🏮</span>
+            <span class="badge bg-white text-muted border rounded-pill px-3 py-2 fw-semibold item-check" data-id="3">3. Peaceful Blue Butterfly 🦋</span>
+            <span class="badge bg-white text-muted border rounded-pill px-3 py-2 fw-semibold item-check" data-id="4">4. Golden Zen Star ✨</span>
+            <span class="badge bg-white text-muted border rounded-pill px-3 py-2 fw-semibold item-check" data-id="5">5. Floating Blossom Petal 🍃</span>
+          </div>
+        </div>
+
+        <!-- Level Complete Banner -->
+        <div id="winBannerL1" class="alert alert-success rounded-4 d-none p-4 mt-4 text-center shadow-sm animate-fade-up">
+          <div class="fs-1 mb-2">🎉✨</div>
+          <h4 class="fw-extrabold text-success mb-2">Outstanding Observation!</h4>
+          <p class="mb-3 small">You spotted all 5 differences! By focusing deeply on visual details, your mind has paused overthinking and grounded itself.</p>
+          <button class="btn btn-success rounded-pill px-4 fw-bold switch-tab-btn" data-target="#tab-diff2-tab">
+            Proceed to Level 2 (Zen Garden) <i class="bi bi-arrow-right ms-1"></i>
+          </button>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- LEVEL 2: SPOT THE DIFFERENCE (ZEN GARDEN) -->
+    <div class="tab-pane fade" id="tab-diff2" role="tabpanel">
+      <div class="card-soft p-4 p-md-5 max-w-1000 mx-auto">
+
+        <div class="d-flex flex-column flex-md-row align-items-center justify-content-between gap-3 border-bottom pb-3 mb-4">
+          <div>
+            <h3 class="fw-extrabold mb-1">🌿 Level 2: Zen Rock Garden Differences</h3>
+            <p class="text-muted small mb-0">Spot 5 differences in this tranquil Japanese rock garden.</p>
+          </div>
+          <div class="d-flex align-items-center gap-3">
+            <span class="badge bg-success fs-6 px-3 py-2 rounded-pill fw-bold" id="level2ScoreBadge">
+              Differences: 0 / 5
+            </span>
+            <button id="resetLevel2Btn" class="btn btn-outline-primary rounded-pill px-4 fw-bold">
+              <i class="bi bi-arrow-counterclockwise me-1"></i> Reset Level
+            </button>
+          </div>
+        </div>
+
+        <!-- Side-by-Side Images -->
+        <div class="row g-4 mb-4">
+          
+          <!-- Image A -->
+          <div class="col-md-6">
+            <div class="card p-2 border-0 shadow-sm rounded-4 text-center bg-light">
+              <div class="badge bg-secondary mb-2 align-self-start ms-2 rounded-pill px-3">Image A (Original)</div>
+              <div class="spot-img-wrapper" id="wrapperA_L2">
+                <img src="{% static 'images/garden_scene.png' %}" alt="Original Zen Garden" class="img-fluid rounded-3 spot-main-img">
+                <div class="hotspot-overlay" id="overlayA_L2"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Image B -->
+          <div class="col-md-6">
+            <div class="card p-2 border-0 shadow-sm rounded-4 text-center bg-light">
+              <div class="badge bg-success mb-2 align-self-start ms-2 rounded-pill px-3">Image B (Spot 5 Differences)</div>
+              <div class="spot-img-wrapper" id="wrapperB_L2">
+                <img src="{% static 'images/garden_scene.png' %}" alt="Modified Zen Garden" class="img-fluid rounded-3 spot-main-img">
+                
+                <!-- Added visual items -->
+                <div class="diff-graphic-item diff-l2-1" title="Peace Bird">🕊️</div>
+                <div class="diff-graphic-item diff-l2-2" title="Polished Pebble">💎</div>
+                <div class="diff-graphic-item diff-l2-3" title="Garden Lantern">🏮</div>
+                <div class="diff-graphic-item diff-l2-4" title="Cherry Blossom">🌸</div>
+                <div class="diff-graphic-item diff-l2-5" title="Bamboo Water Spout">🎋</div>
+
+                <div class="hotspot-overlay" id="overlayB_L2"></div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Checklist Level 2 -->
+        <div class="p-3 rounded-4 bg-light border">
+          <h6 class="fw-bold mb-2 text-uppercase text-muted small" style="letter-spacing:0.06em;">Differences Checklist:</h6>
+          <div class="d-flex flex-wrap gap-2" id="checklistL2">
+            <span class="badge bg-white text-muted border rounded-pill px-3 py-2 fw-semibold item-check-l2" data-id="1">1. Peaceful White Dove 🕊️</span>
+            <span class="badge bg-white text-muted border rounded-pill px-3 py-2 fw-semibold item-check-l2" data-id="2">2. Polished Zen Crystal 💎</span>
+            <span class="badge bg-white text-muted border rounded-pill px-3 py-2 fw-semibold item-check-l2" data-id="3">3. Red Stone Lantern 🏮</span>
+            <span class="badge bg-white text-muted border rounded-pill px-3 py-2 fw-semibold item-check-l2" data-id="4">4. Floating Blossom 🌸</span>
+            <span class="badge bg-white text-muted border rounded-pill px-3 py-2 fw-semibold item-check-l2" data-id="5">5. Bamboo Water Spout 🎋</span>
+          </div>
+        </div>
+
+        <!-- Level 2 Win Banner -->
+        <div id="winBannerL2" class="alert alert-success rounded-4 d-none p-4 mt-4 text-center shadow-sm animate-fade-up">
+          <div class="fs-1 mb-2">🏆🌸</div>
+          <h4 class="fw-extrabold text-success mb-2">Level 2 Complete!</h4>
+          <p class="mb-3 small">All 5 differences found in the Zen Garden. Try the Object Hunt Challenge next!</p>
+          <button class="btn btn-success rounded-pill px-4 fw-bold switch-tab-btn" data-target="#tab-count-tab">
+            Try Challenge 3 (Mindful Object Hunt) <i class="bi bi-arrow-right ms-1"></i>
+          </button>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- CHALLENGE 3: MINDFUL OBJECT HUNT -->
+    <div class="tab-pane fade" id="tab-count" role="tabpanel">
+      <div class="card-soft p-4 p-md-5 max-w-900 mx-auto text-center">
+
+        <div class="d-flex flex-column flex-md-row align-items-center justify-content-between gap-3 border-bottom pb-3 mb-4">
+          <div class="text-start">
+            <h3 class="fw-extrabold mb-1">🌸 Challenge 3: Mindful Object Hunt</h3>
+            <p class="text-muted small mb-0">Scan the scene to find &amp; tap all <strong>7 Hidden Peaceful Symbols</strong>. Each discovery unlocks a calm CBT quote.</p>
+          </div>
+          <span class="badge bg-info fs-6 px-3 py-2 rounded-pill fw-bold" id="huntScoreBadge">
+            Found: 0 / 7
+          </span>
+        </div>
+
+        <!-- Dynamic Affirmation Box -->
+        <div id="huntAffirmationBox" class="p-3 mb-4 rounded-4 bg-info-subtle text-info-dark fw-bold fs-6 min-h-48 d-flex align-items-center justify-content-center border border-info border-opacity-25" style="background:#E3F2FD; color:#0D47A1;">
+          Tap the hidden symbols in the tranquil illustration below!
+        </div>
+
+        <!-- Interactive Hunt Scene Container -->
+        <div class="spot-img-wrapper max-w-800 mx-auto mb-4 border rounded-4 shadow-sm overflow-hidden" id="huntWrapper">
+          <img src="{% static 'images/pond_scene.png' %}" alt="Mindful Object Hunt Scene" class="img-fluid rounded-4 spot-main-img">
+          
+          <!-- 7 Hidden Hunt Items -->
+          <div class="hunt-item hunt-1" data-id="1" data-quote="I am fully present in this moment. 🌸">🌸</div>
+          <div class="hunt-item hunt-2" data-id="2" data-quote="My thoughts flow gently like water. 💧">💧</div>
+          <div class="hunt-item hunt-3" data-id="3" data-quote="Peace enters with every deep breath. 🌿">🌿</div>
+          <div class="hunt-item hunt-4" data-id="4" data-quote="I release worry and embrace calm. ✨">✨</div>
+          <div class="hunt-item hunt-5" data-id="5" data-quote="Stillness brings total clarity. 🕊️">🕊️</div>
+          <div class="hunt-item hunt-6" data-id="6" data-quote="I am safe and centered right now. ☀️">☀️</div>
+          <div class="hunt-item hunt-7" data-id="7" data-quote="My heart is light and grateful. 💡">💡</div>
+        </div>
+
+        <button id="resetHuntBtn" class="btn btn-outline-secondary rounded-pill px-4 fw-bold">
+          <i class="bi bi-arrow-counterclockwise me-1"></i> Reset Object Hunt
+        </button>
+
+      </div>
+    </div>
+
+  </div>
+
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+let soundEnabled = true;
+
+function playChimeSound() {
+  if (!soundEnabled) return;
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    if (ctx.state === 'suspended') ctx.resume();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(587.33, ctx.currentTime); // D5
+    osc.frequency.exponentialRampToValueAtTime(880, ctx.currentTime + 0.15); // A5
+    gain.gain.setValueAtTime(0.25, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.25);
+
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.start();
+    osc.stop(ctx.currentTime + 0.26);
+  } catch(e){}
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+
+  // Global Sound Toggle
+  const soundBtn = document.getElementById('globalSoundToggle');
+  const soundIcon = document.getElementById('soundIcon');
+  const soundText = document.getElementById('soundText');
+
+  if (soundBtn) {
+    soundBtn.addEventListener('click', function() {
+      soundEnabled = !soundEnabled;
+      soundText.textContent = soundEnabled ? 'ON' : 'MUTED';
+      soundIcon.className = soundEnabled ? 'bi bi-volume-up-fill me-1 text-success' : 'bi bi-volume-mute-fill me-1 text-danger';
+    });
+  }
+
+  // Switch tab helper buttons
+  document.querySelectorAll('.switch-tab-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+      const targetId = this.getAttribute('data-target');
+      const targetTab = document.querySelector(targetId);
+      if (targetTab) targetTab.click();
+    });
+  });
+
+  // ----------------------------------------------------
+  // LEVEL 1: SPOT THE DIFFERENCE (LOTUS POND)
+  // ----------------------------------------------------
+  const diffsL1 = [
+    { id: 1, name: "Glowing Lotus", x: 28, y: 72 },
+    { id: 2, name: "Floating Lantern", x: 74, y: 38 },
+    { id: 3, name: "Blue Butterfly", x: 46, y: 22 },
+    { id: 4, name: "Golden Zen Star", x: 86, y: 16 },
+    { id: 5, name: "Blossom Petal", x: 18, y: 44 }
+  ];
+
+  let foundL1 = new Set();
+  const overlayA_L1 = document.getElementById('overlayA_L1');
+  const overlayB_L1 = document.getElementById('overlayB_L1');
+  const badgeL1 = document.getElementById('level1ScoreBadge');
+  const bannerL1 = document.getElementById('winBannerL1');
+  const resetBtnL1 = document.getElementById('resetLevel1Btn');
+
+  function initLevel1() {
+    foundL1.clear();
+    badgeL1.textContent = 'Differences: 0 / 5';
+    if (bannerL1) bannerL1.classList.add('d-none');
+    document.querySelectorAll('#checklistL1 .item-check').forEach(el => {
+      el.className = 'badge bg-white text-muted border rounded-pill px-3 py-2 fw-semibold item-check';
+    });
+    
+    // Clear glowing rings
+    overlayA_L1.innerHTML = '';
+    overlayB_L1.innerHTML = '';
+
+    // Create hotspot click areas
+    diffsL1.forEach(item => {
+      [overlayA_L1, overlayB_L1].forEach(overlay => {
+        const hs = document.createElement('div');
+        hs.className = 'hotspot-area';
+        hs.style.left = `calc(${item.x}% - 22px)`;
+        hs.style.top = `calc(${item.y}% - 22px)`;
+        hs.setAttribute('data-id', item.id);
+
+        hs.addEventListener('click', function(e) {
+          e.stopPropagation();
+          markFoundL1(item.id);
+        });
+
+        overlay.appendChild(hs);
+      });
+    });
+  }
+
+  function markFoundL1(id) {
+    if (foundL1.has(id)) return;
+    foundL1.add(id);
+    playChimeSound();
+
+    badgeL1.textContent = `Differences: ${foundL1.size} / 5`;
+
+    const itemData = diffsL1.find(d => d.id === id);
+    if (itemData) {
+      // Add glowing circles on both A and B overlays
+      [overlayA_L1, overlayB_L1].forEach(overlay => {
+        const ring = document.createElement('div');
+        ring.className = 'found-ring-marker animate-pop-in';
+        ring.style.left = `calc(${itemData.x}% - 24px)`;
+        ring.style.top = `calc(${itemData.y}% - 24px)`;
+        overlay.appendChild(ring);
+      });
+    }
+
+    // Checkoff list item
+    const checkEl = document.querySelector(`#checklistL1 .item-check[data-id="${id}"]`);
+    if (checkEl) {
+      checkEl.className = 'badge bg-success text-white border-0 rounded-pill px-3 py-2 fw-bold item-check shadow-sm';
+    }
+
+    if (foundL1.size === 5) {
+      if (bannerL1) bannerL1.classList.remove('d-none');
+    }
+  }
+
+  if (overlayA_L1) {
+    initLevel1();
+    if (resetBtnL1) resetBtnL1.addEventListener('click', initLevel1);
+  }
+
+  // ----------------------------------------------------
+  // LEVEL 2: SPOT THE DIFFERENCE (ZEN GARDEN)
+  // ----------------------------------------------------
+  const diffsL2 = [
+    { id: 1, name: "Peace Dove", x: 30, y: 24 },
+    { id: 2, name: "Zen Crystal", x: 62, y: 76 },
+    { id: 3, name: "Stone Lantern", x: 80, y: 44 },
+    { id: 4, name: "Floating Blossom", x: 18, y: 18 },
+    { id: 5, name: "Bamboo Spout", x: 44, y: 64 }
+  ];
+
+  let foundL2 = new Set();
+  const overlayA_L2 = document.getElementById('overlayA_L2');
+  const overlayB_L2 = document.getElementById('overlayB_L2');
+  const badgeL2 = document.getElementById('level2ScoreBadge');
+  const bannerL2 = document.getElementById('winBannerL2');
+  const resetBtnL2 = document.getElementById('resetLevel2Btn');
+
+  function initLevel2() {
+    foundL2.clear();
+    badgeL2.textContent = 'Differences: 0 / 5';
+    if (bannerL2) bannerL2.classList.add('d-none');
+    document.querySelectorAll('#checklistL2 .item-check-l2').forEach(el => {
+      el.className = 'badge bg-white text-muted border rounded-pill px-3 py-2 fw-semibold item-check-l2';
+    });
+
+    overlayA_L2.innerHTML = '';
+    overlayB_L2.innerHTML = '';
+
+    diffsL2.forEach(item => {
+      [overlayA_L2, overlayB_L2].forEach(overlay => {
+        const hs = document.createElement('div');
+        hs.className = 'hotspot-area';
+        hs.style.left = `calc(${item.x}% - 22px)`;
+        hs.style.top = `calc(${item.y}% - 22px)`;
+        hs.setAttribute('data-id', item.id);
+
+        hs.addEventListener('click', function(e) {
+          e.stopPropagation();
+          markFoundL2(item.id);
+        });
+
+        overlay.appendChild(hs);
+      });
+    });
+  }
+
+  function markFoundL2(id) {
+    if (foundL2.has(id)) return;
+    foundL2.add(id);
+    playChimeSound();
+
+    badgeL2.textContent = `Differences: ${foundL2.size} / 5`;
+
+    const itemData = diffsL2.find(d => d.id === id);
+    if (itemData) {
+      [overlayA_L2, overlayB_L2].forEach(overlay => {
+        const ring = document.createElement('div');
+        ring.className = 'found-ring-marker animate-pop-in';
+        ring.style.left = `calc(${itemData.x}% - 24px)`;
+        ring.style.top = `calc(${itemData.y}% - 24px)`;
+        overlay.appendChild(ring);
+      });
+    }
+
+    const checkEl = document.querySelector(`#checklistL2 .item-check-l2[data-id="${id}"]`);
+    if (checkEl) {
+      checkEl.className = 'badge bg-success text-white border-0 rounded-pill px-3 py-2 fw-bold item-check-l2 shadow-sm';
+    }
+
+    if (foundL2.size === 5) {
+      if (bannerL2) bannerL2.classList.remove('d-none');
+    }
+  }
+
+  if (overlayA_L2) {
+    initLevel2();
+    if (resetBtnL2) resetBtnL2.addEventListener('click', initLevel2);
+  }
+
+  // ----------------------------------------------------
+  // CHALLENGE 3: MINDFUL OBJECT HUNT
+  // ----------------------------------------------------
+  const huntItems = document.querySelectorAll('.hunt-item');
+  const huntScoreBadge = document.getElementById('huntScoreBadge');
+  const huntAffirmationBox = document.getElementById('huntAffirmationBox');
+  const resetHuntBtn = document.getElementById('resetHuntBtn');
+  let huntFound = new Set();
+
+  function initHunt() {
+    huntFound.clear();
+    if (huntScoreBadge) huntScoreBadge.textContent = 'Found: 0 / 7';
+    if (huntAffirmationBox) huntAffirmationBox.textContent = 'Tap the hidden symbols in the tranquil illustration below!';
+    
+    huntItems.forEach(item => {
+      item.classList.remove('found');
+    });
+  }
+
+  huntItems.forEach(item => {
+    item.addEventListener('click', function(e) {
+      e.stopPropagation();
+      const id = this.getAttribute('data-id');
+      const quote = this.getAttribute('data-quote');
+
+      if (!huntFound.has(id)) {
+        huntFound.add(id);
+        playChimeSound();
+        this.classList.add('found');
+        
+        if (huntScoreBadge) huntScoreBadge.textContent = `Found: ${huntFound.size} / 7`;
+        if (huntAffirmationBox) huntAffirmationBox.textContent = quote;
+
+        if (huntFound.size === 7 && huntAffirmationBox) {
+          huntAffirmationBox.textContent = "🎉 Congratulations! All 7 serene symbols found! Your visual awareness is completely present & calm.";
+        }
+      }
+    });
+  });
+
+  if (resetHuntBtn) resetHuntBtn.addEventListener('click', initHunt);
+
+});
+</script>
+{% endblock %}

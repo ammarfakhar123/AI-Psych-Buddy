@@ -1,0 +1,12 @@
+Django>=5.1,<7.0
+djangorestframework>=3.15,<4.0
+python-dotenv>=1.0
+dj-database-url>=2.2
+# LLM (OpenAI-compatible client: works with OpenAI, Groq, OpenRouter, Gemini's OpenAI endpoint, Ollama...)
+openai>=1.40
+# RAG
+chromadb>=0.5
+sentence-transformers>=3.0
+numpy>=1.26
+# Uncomment when deploying with PostgreSQL
+# psycopg[binary]>=3.2

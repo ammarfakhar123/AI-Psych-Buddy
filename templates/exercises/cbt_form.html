@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block title %}CBT reflection - AI Psych Buddy{% endblock %}
+{% block content %}
+<div class="card-soft p-4 p-md-5 mx-auto" style="max-width:760px;">
+  <h3 class="page-title text-center">CBT-style self-reflection</h3>
+  <p class="text-center text-muted-soft small">A guided wellness exercise for looking at a thought from different angles. It is not psychotherapy.</p>
+  <div class="step-dots my-4" id="dots"></div>
+  <form method="post" id="cbtForm" novalidate>
+    {% csrf_token %}
+    {% for s in steps %}
+    <div class="step-pane {% if forloop.first %}active{% endif %}" data-required="{% if s.field.field.required %}1{% else %}0{% endif %}">
+      <div class="small text-muted-soft">Step {{ forloop.counter }} of {{ steps|length }}</div>
+      <h4 class="fw-bold">{{ s.title }}</h4>
+      <p class="text-muted-soft">{{ s.help }}</p>
+      {{ s.field }}
+      {% for err in s.field.errors %}<div class="text-danger small mt-1">{{ err }}</div>{% endfor %}
+      <div class="text-danger small mt-1 step-error d-none">Please write a few words to continue.</div>
+    </div>
+    {% endfor %}
+    <div class="d-flex justify-content-between mt-4">
+      <button type="button" class="btn btn-outline-secondary rounded-pill px-4" id="prevBtn">Back</button>
+      <button type="button" class="btn btn-primary rounded-pill px-4" id="nextBtn">Next</button>
+      <button type="submit" class="btn btn-success rounded-pill px-4 d-none" id="saveBtn">Save reflection</button>
+    </div>
+  </form>
+</div>
+{% endblock %}
+{% block extra_js %}
+<script>
+  var panes = Array.prototype.slice.call(document.querySelectorAll('.step-pane'));
+  var dots = document.getElementById('dots');
+  var prev = document.getElementById('prevBtn'), next = document.getElementById('nextBtn'), save = document.getElementById('saveBtn');
+  var current = 0;
+  // If the server returned validation errors, jump to the first pane that has one.
+  panes.some(function (p, i) { if (p.querySelector('.text-danger:not(.step-error)')) { current = i; return true; } });
+  panes.forEach(function () { dots.appendChild(Object.assign(document.createElement('span'), { className: 'dot' })); });
+
+  function show() {
+    panes.forEach(function (p, i) { p.classList.toggle('active', i === current); });
+    Array.prototype.forEach.call(dots.children, function (d, i) { d.className = 'dot' + (i === current ? ' active' : (i < current ? ' done' : '')); });
+    prev.style.visibility = current === 0 ? 'hidden' : 'visible';
+    var last = current === panes.length - 1;
+    next.classList.toggle('d-none', last); save.classList.toggle('d-none', !last);
+  }
+  next.addEventListener('click', function () {
+    var pane = panes[current], area = pane.querySelector('textarea');
+    var needs = pane.dataset.required === '1' && !area.value.trim();
+    pane.querySelector('.step-error').classList.toggle('d-none', !needs);
+    if (needs) { area.focus(); return; }
+    current += 1; show();
+  });
+  prev.addEventListener('click', function () { if (current > 0) { current -= 1; show(); } });
+  show();
+</script>
+{% endblock %}

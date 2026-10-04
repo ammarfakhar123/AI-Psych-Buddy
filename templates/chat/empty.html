@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+
+{% block title %}Chat - AI Psych Buddy{% endblock %}
+
+{% block content %}
+
+<div class="chat-welcome mx-auto">
+
+  <div class="card-soft p-4 p-md-5 text-center">
+
+    <!-- Icon -->
+    <div class="icon-bubble bubble-rose mx-auto mb-4">
+      <i class="bi bi-chat-heart-fill"></i>
+    </div>
+
+    <!-- Heading -->
+    <span class="small fw-bold text-uppercase"
+          style="color:var(--buddy-coral);letter-spacing:.12em;">
+      Your safe space
+    </span>
+
+    <h2 class="fw-bold mt-2 mb-3">
+      What's on your mind?
+    </h2>
+
+    <p class="text-muted-soft mx-auto mb-4"
+       style="max-width:520px;">
+      Start a conversation with your AI buddy. Share your thoughts,
+      feelings, or anything you'd like to reflect on.
+    </p>
+
+    <!-- Start Chat -->
+    <form method="post" action="{% url 'chat:new' %}">
+      {% csrf_token %}
+
+      <button
+        class="btn btn-primary btn-lg rounded-pill px-5"
+        type="submit">
+
+        <i class="bi bi-chat-heart me-2"></i>
+        Start AI Chat
+
+        <i class="bi bi-arrow-right ms-2"></i>
+
+      </button>
+
+    </form>
+
+    <!-- Small reassurance -->
+    <div class="d-flex justify-content-center flex-wrap gap-3 mt-4">
+
+      <span class="small text-muted-soft">
+        <i class="bi bi-heart-fill me-1"
+           style="color:var(--buddy-coral);"></i>
+        Supportive conversation
+      </span>
+
+      <span class="small text-muted-soft">
+        <i class="bi bi-shield-check me-1"
+           style="color:var(--buddy-sage-dark);"></i>
+        Wellness-focused
+      </span>
+
+    </div>
+
+  </div>
+
+  <!-- Bottom hint -->
+  <div class="text-center mt-3">
+    <small class="text-muted-soft">
+      <i class="bi bi-stars me-1"></i>
+      Take your time. There is no pressure to share more than you're comfortable with.
+    </small>
+  </div>
+
+</div>
+
+{% endblock %}

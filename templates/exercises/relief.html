@@ -1,0 +1,630 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Instant Stress Relief & Guided Calm Hub - AI Psych Buddy{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+
+  <!-- Header Banner -->
+  <div class="text-center mb-5 animate-fade-up">
+    <div class="d-inline-flex align-items-center justify-content-center p-3 rounded-circle shadow-sm mb-3" style="background:linear-gradient(135deg, var(--buddy-primary), var(--buddy-sage-dark)); width:64px; height:64px; color:#fff;">
+      <i class="bi bi-wind fs-2"></i>
+    </div>
+    <h1 class="page-title fw-extrabold mb-2">Instant Stress Relief &amp; Somatic Calm Hub</h1>
+    <p class="text-muted mx-auto mb-3" style="max-width: 720px;">
+      Real, evidence-backed tools designed to physically reduce cortisol, regulate heart rate, unpack racing thoughts, and restore emotional balance when you feel overwhelmed.
+    </p>
+
+    <div class="d-flex justify-content-center align-items-center flex-wrap gap-2">
+      <span class="badge rounded-pill bg-success-subtle text-success px-3 py-2 fw-bold">
+        <i class="bi bi-shield-check me-1"></i> Non-Gamified Clinical Wellness Tools
+      </span>
+      <span class="badge rounded-pill bg-primary-subtle text-primary px-3 py-2 fw-bold">
+        <i class="bi bi-heart-pulse-fill me-1"></i> Vagus Nerve &amp; Somatic Regulation
+      </span>
+    </div>
+  </div>
+
+  <!-- Relief Tools Navigation Tabs -->
+  <ul class="nav nav-pills justify-content-center gap-2 mb-5 animate-fade-up border-0" id="reliefTabs" role="tablist">
+    <li class="nav-item" role="presentation">
+      <button class="nav-link active rounded-pill px-4 py-2.5 fw-extrabold shadow-sm d-flex align-items-center gap-2" id="tab-breath-tab" data-bs-toggle="pill" data-bs-target="#tab-breath" type="button" role="tab">
+        <i class="bi bi-volume-up-fill text-primary fs-5"></i> 🌬️ Voice-Guided Breathing Games
+      </button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link rounded-pill px-4 py-2.5 fw-extrabold shadow-sm d-flex align-items-center gap-2" id="tab-dump-tab" data-bs-toggle="pill" data-bs-target="#tab-dump" type="button" role="tab">
+        <i class="bi bi-trash3-fill text-danger"></i> 🗑️ Mindful Brain Dump
+      </button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link rounded-pill px-4 py-2.5 fw-extrabold shadow-sm d-flex align-items-center gap-2" id="tab-body-tab" data-bs-toggle="pill" data-bs-target="#tab-body" type="button" role="tab">
+        <i class="bi bi-person-arms-up text-success"></i> 🧘 Progressive Muscle Release
+      </button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link rounded-pill px-4 py-2.5 fw-extrabold shadow-sm d-flex align-items-center gap-2" id="tab-beep-tab" data-bs-toggle="pill" data-bs-target="#tab-beep" type="button" role="tab">
+        <i class="bi bi-soundwave text-purple fs-5"></i> 🔔 10-Sec Beep Resetter
+      </button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link rounded-pill px-4 py-2.5 fw-extrabold shadow-sm d-flex align-items-center gap-2" id="tab-sos-tab" data-bs-toggle="pill" data-bs-target="#tab-sos" type="button" role="tab">
+        <i class="bi bi-lightning-charge-fill text-warning"></i> 🚨 60-Second SOS Resets
+      </button>
+    </li>
+  </ul>
+
+  <!-- Tab Contents -->
+  <div class="tab-content animate-fade-up" id="reliefTabsContent">
+
+    <!-- TOOL 1: VOICE-GUIDED BREATHING GAMES (PRIMARY ACTIVE TAB) -->
+    <div class="tab-pane fade show active" id="tab-breath" role="tabpanel">
+      <div class="card-soft p-4 p-md-5 max-w-900 mx-auto text-center">
+
+        <div class="d-flex flex-column flex-md-row align-items-center justify-content-between gap-3 border-bottom pb-3 mb-4">
+          <div class="text-start">
+            <div class="d-flex align-items-center gap-2 mb-1">
+              <span class="badge bg-primary-subtle text-primary rounded-pill px-3 py-1 fw-bold">
+                <i class="bi bi-mic-fill me-1"></i> Real Audio Voice Guidance
+              </span>
+              <span class="badge bg-success-subtle text-success rounded-pill px-3 py-1 fw-bold">
+                <i class="bi bi-heart-pulse-fill me-1"></i> Cortisol Reduction
+              </span>
+            </div>
+            <h3 class="fw-extrabold mb-0">Voice-Guided Somatic Breathing Games</h3>
+          </div>
+          
+          <!-- Voice Guidance Toggle Switch -->
+          <div class="d-flex align-items-center gap-2 bg-white px-3 py-2 rounded-pill border shadow-sm">
+            <i class="bi bi-volume-up-fill text-primary fs-5"></i>
+            <div class="form-check form-switch m-0 d-flex align-items-center gap-2">
+              <input class="form-check-input" type="checkbox" role="switch" id="voiceToggle" checked style="cursor:pointer; width:42px; height:22px;">
+              <label class="form-check-label fw-bold small text-nowrap" for="voiceToggle" style="cursor:pointer;">
+                Voice Guidance <span id="voiceStatusText" class="text-success fw-bold">(ON)</span>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Breathing Game Mode Selectors -->
+        <div class="mb-4">
+          <small class="fw-bold text-uppercase text-muted d-block mb-2" style="letter-spacing:0.08em; font-size:0.75rem;">
+            Select Breathing Game Mode:
+          </small>
+
+          <div class="d-flex justify-content-center flex-wrap gap-2">
+            <button class="btn btn-sm btn-outline-primary rounded-pill px-3 py-2 fw-bold breath-pattern-btn active" data-pattern="relax">
+              🌬️ 4-7-8 Deep Relaxation
+            </button>
+            <button class="btn btn-sm btn-outline-primary rounded-pill px-3 py-2 fw-bold breath-pattern-btn" data-pattern="box">
+              📦 Box Breathing (4s-4s-4s-4s)
+            </button>
+            <button class="btn btn-sm btn-outline-primary rounded-pill px-3 py-2 fw-bold breath-pattern-btn" data-pattern="belly">
+              🌊 Diaphragmatic Belly Wave (5s-5s)
+            </button>
+            <button class="btn btn-sm btn-outline-primary rounded-pill px-3 py-2 fw-bold breath-pattern-btn" data-pattern="coherence">
+              🕊️ Coherence Resonance (6s-6s)
+            </button>
+          </div>
+        </div>
+
+        <!-- Ambient Sound Presets -->
+        <div class="d-flex justify-content-center align-items-center gap-2 mb-4">
+          <small class="fw-bold text-muted me-1">Background Soundscape:</small>
+          <div class="btn-group rounded-pill p-1 bg-light border" role="group" id="soundPresetGroup">
+            <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill active sound-preset-btn" data-preset="rain">🌧️ Gentle Rain</button>
+            <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill sound-preset-btn" data-preset="waves">🌊 Ocean Waves</button>
+            <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill sound-preset-btn" data-preset="wind">🍃 Forest Wind</button>
+            <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill sound-preset-btn" data-preset="mute">🔇 Silent</button>
+          </div>
+        </div>
+
+        <!-- Animated Breathing Halo Ring -->
+        <div class="my-5 position-relative">
+          <div id="reliefBreathingRing" class="relief-breathing-ring shadow-lg">
+            <span id="reliefPhaseText" class="fs-3 fw-extrabold">Ready</span>
+            <small id="reliefTimerText" class="opacity-75 font-monospace fw-bold fs-6">Click Start</small>
+          </div>
+        </div>
+
+        <div class="d-flex justify-content-center align-items-center gap-3">
+          <button id="startReliefBreathingBtn" class="btn btn-primary btn-lg rounded-pill px-5 fw-extrabold shadow">
+            <i class="bi bi-play-fill me-1"></i> Start Voice-Guided Breathing Session
+          </button>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- TOOL 2: MINDFUL BRAIN DUMP & THOUGHT DISSOLVER -->
+    <div class="tab-pane fade" id="tab-dump" role="tabpanel">
+      <div class="card-soft p-4 p-md-5 max-w-900 mx-auto text-center">
+        
+        <div class="d-flex align-items-center justify-content-between border-bottom pb-3 mb-4">
+          <div class="text-start">
+            <h3 class="fw-extrabold mb-1">🗑️ Mindful Brain Dump &amp; Thought Release</h3>
+            <p class="text-muted small mb-0">Unload everything weighing on your mind. Once written, hit "Release Thought" to visually dissolve it into calm space.</p>
+          </div>
+          <span class="badge bg-danger-subtle text-danger px-3 py-2 rounded-pill fw-bold">Instant Relief</span>
+        </div>
+
+        <div class="mb-4 text-start">
+          <label for="brainDumpText" class="form-label fw-bold text-muted small text-uppercase" style="letter-spacing:0.06em;">What is stressing you out right now?</label>
+          <textarea id="brainDumpText" class="form-control rounded-4 p-3 shadow-inner" rows="5" placeholder="Write freely without judgment... (e.g., I have too many tasks, I'm worried about work, my chest feels heavy...)"></textarea>
+        </div>
+
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+          <div class="d-flex align-items-center gap-2">
+            <span class="small fw-bold text-muted">Stress Heavy Level:</span>
+            <select id="stressLevelSelect" class="form-select form-select-sm rounded-pill px-3 py-1.5 fw-bold" style="width:auto;">
+              <option value="high">⚡ High Stress (8-10)</option>
+              <option value="medium" selected>🌤️ Moderate Stress (4-7)</option>
+              <option value="low">🌱 Mild Tension (1-3)</option>
+            </select>
+          </div>
+
+          <button id="dissolveThoughtBtn" class="btn btn-primary btn-lg rounded-pill px-5 fw-extrabold shadow">
+            <i class="bi bi-fire me-2 text-warning"></i> Release &amp; Dissolve Stress Thought
+          </button>
+        </div>
+
+        <!-- Dissolve Animation Output Area -->
+        <div id="dissolveOutputBox" class="mt-4 p-4 rounded-4 d-none text-center animate-fade-up" style="background:var(--buddy-sage-soft); border:1px solid var(--buddy-sage);">
+          <div class="fs-1 mb-2">🍃✨</div>
+          <h4 class="fw-extrabold text-success mb-2">Thought Acknowledged &amp; Released!</h4>
+          <p id="dissolveReframingText" class="mb-0 text-muted lead" style="font-size:1.05rem; line-height:1.6;"></p>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- TOOL 3: PROGRESSIVE MUSCLE RELAXATION (PMR) -->
+    <div class="tab-pane fade" id="tab-body" role="tabpanel">
+      <div class="card-soft p-4 p-md-5 max-w-900 mx-auto">
+
+        <div class="d-flex align-items-center justify-content-between border-bottom pb-3 mb-4">
+          <div>
+            <h3 class="fw-extrabold mb-1">🧘 Progressive Muscle Relaxation (PMR)</h3>
+            <p class="text-muted small mb-0">Physical stress accumulates in muscle groups. Follow this 5-step tension release guide.</p>
+          </div>
+          <span class="badge bg-success-subtle text-success px-3 py-2 rounded-pill fw-bold" id="pmrStepBadge">Step 1 of 5</span>
+        </div>
+
+        <div class="progress mb-4 rounded-pill" style="height: 10px;">
+          <div id="pmrProgressBar" class="progress-bar bg-success" role="progressbar" style="width: 20%;"></div>
+        </div>
+
+        <!-- PMR Step Card -->
+        <div id="pmrStepCard" class="p-4 rounded-4 bg-light text-center mb-4 border">
+          <div class="fs-1 mb-2" id="pmrStepIcon">🗣️</div>
+          <h4 class="fw-extrabold mb-2" id="pmrStepTitle">Step 1: Shoulders &amp; Neck Release</h4>
+          <p class="text-muted mb-4 lead" id="pmrStepDesc" style="font-size:1.1rem; line-height:1.6;">
+            Raise your shoulders up towards your ears. Hold the tension tightly for 5 seconds... Then drop them completely and feel the relief!
+          </p>
+
+          <div class="d-flex justify-content-center align-items-center gap-3">
+            <button id="pmrTimerBtn" class="btn btn-success rounded-pill px-4 fw-bold">
+              <i class="bi bi-stopwatch me-1"></i> Hold Tension for 5s
+            </button>
+            <button id="nextPmrStepBtn" class="btn btn-outline-primary rounded-pill px-4 fw-bold">
+              Next Step <i class="bi bi-arrow-right ms-1"></i>
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- TOOL 4: 60-SECOND SOS CRISIS RESETS -->
+    <div class="tab-pane fade" id="tab-sos" role="tabpanel">
+      <div class="card-soft p-4 p-md-5 max-w-1000 mx-auto">
+
+        <div class="text-center mb-4">
+          <span class="badge bg-warning-subtle text-warning-dark fw-bold rounded-pill px-3 py-1 mb-2 text-uppercase" style="background:#FFF3CD; color:#856404;">
+            🚨 60-Second SOS Resets
+          </span>
+          <h3 class="fw-extrabold mb-2">What physical symptom are you experiencing?</h3>
+          <p class="text-muted">Select your exact symptom for immediate 60-second evidence-backed relief:</p>
+        </div>
+
+        <div class="row g-4">
+
+          <!-- SOS Card 1 -->
+          <div class="col-md-6 col-lg-3">
+            <div class="card-soft p-4 h-100 text-center d-flex flex-column justify-content-between border">
+              <div>
+                <div class="fs-1 mb-2">🌪️</div>
+                <h5 class="fw-bold mb-2">Racing Thoughts</h5>
+                <p class="small text-muted mb-3">Can't stop overthinking or looping scenario.</p>
+              </div>
+              <button class="btn btn-sm btn-outline-primary rounded-pill fw-bold sos-trigger-btn" data-sos="racing">
+                Get 60s Relief <i class="bi bi-arrow-right ms-1"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- SOS Card 2 -->
+          <div class="col-md-6 col-lg-3">
+            <div class="card-soft p-4 h-100 text-center d-flex flex-column justify-content-between border">
+              <div>
+                <div class="fs-1 mb-2">🫀</div>
+                <h5 class="fw-bold mb-2">Chest Tightness</h5>
+                <p class="small text-muted mb-3">Panic or shallow breath in chest.</p>
+              </div>
+              <button class="btn btn-sm btn-outline-primary rounded-pill fw-bold sos-trigger-btn" data-sos="chest">
+                Get 60s Relief <i class="bi bi-arrow-right ms-1"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- SOS Card 3 -->
+          <div class="col-md-6 col-lg-3">
+            <div class="card-soft p-4 h-100 text-center d-flex flex-column justify-content-between border">
+              <div>
+                <div class="fs-1 mb-2">🔋</div>
+                <h5 class="fw-bold mb-2">Work Burnout</h5>
+                <p class="small text-muted mb-3">Brain feeling drained &amp; exhausted.</p>
+              </div>
+              <button class="btn btn-sm btn-outline-primary rounded-pill fw-bold sos-trigger-btn" data-sos="burnout">
+                Get 60s Relief <i class="bi bi-arrow-right ms-1"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- SOS Card 4 -->
+          <div class="col-md-6 col-lg-3">
+            <div class="card-soft p-4 h-100 text-center d-flex flex-column justify-content-between border">
+              <div>
+                <div class="fs-1 mb-2">🔥</div>
+                <h5 class="fw-bold mb-2">Anger / Frustration</h5>
+                <p class="small text-muted mb-3">Body heated or overwhelmed with emotion.</p>
+              </div>
+              <button class="btn btn-sm btn-outline-primary rounded-pill fw-bold sos-trigger-btn" data-sos="anger">
+                Get 60s Relief <i class="bi bi-arrow-right ms-1"></i>
+              </button>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- SOS Display Box -->
+        <div id="sosDetailBox" class="mt-4 p-4 rounded-4 d-none border text-start" style="background:#FFFDFC; border-left:4px solid var(--buddy-primary) !important;">
+          <div class="d-flex align-items-center gap-2 mb-2">
+            <i class="bi bi-lightbulb-fill text-warning fs-4"></i>
+            <h5 id="sosDetailTitle" class="fw-extrabold mb-0">60-Second Action Plan</h5>
+          </div>
+          <p id="sosDetailText" class="text-muted lead mb-3" style="font-size:1.05rem; line-height:1.6;"></p>
+          <a href="{% url 'chat:home' %}" class="btn btn-sm btn-primary rounded-pill px-4 fw-bold">
+            Talk to AI Buddy About This <i class="bi bi-arrow-right ms-1"></i>
+          </a>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Web Audio Ambient Synthesizer
+let audioCtx = null;
+let currentSoundNodes = [];
+
+function stopAmbient() {
+  currentSoundNodes.forEach(n => {
+    try { n.stop(); } catch(e){}
+    try { n.disconnect(); } catch(e){}
+  });
+  currentSoundNodes = [];
+}
+
+function playAmbient(type) {
+  stopAmbient();
+  try {
+    audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+
+    const bufferSize = audioCtx.sampleRate * 2;
+    const noiseBuffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+    const output = noiseBuffer.getChannelData(0);
+
+    for (let i = 0; i < bufferSize; i++) {
+      output[i] = Math.random() * 2 - 1;
+    }
+
+    const whiteNoise = audioCtx.createBufferSource();
+    whiteNoise.buffer = noiseBuffer;
+    whiteNoise.loop = true;
+
+    const filter = audioCtx.createBiquadFilter();
+    const gain = audioCtx.createGain();
+
+    if (type === 'rain') {
+      filter.type = 'lowpass';
+      filter.frequency.setValueAtTime(800, audioCtx.currentTime);
+      gain.gain.setValueAtTime(0.12, audioCtx.currentTime);
+    } else if (type === 'waves') {
+      filter.type = 'bandpass';
+      filter.frequency.setValueAtTime(450, audioCtx.currentTime);
+      gain.gain.setValueAtTime(0.18, audioCtx.currentTime);
+    } else if (type === 'wind') {
+      filter.type = 'lowpass';
+      filter.frequency.setValueAtTime(400, audioCtx.currentTime);
+      gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+    }
+
+    whiteNoise.connect(filter);
+    filter.connect(gain);
+    gain.connect(audioCtx.destination);
+    whiteNoise.start();
+
+    currentSoundNodes.push(whiteNoise);
+  } catch(e){}
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+
+  // --- TOOL 1: BRAIN DUMP DISSOLVE ---
+  const dumpText = document.getElementById('brainDumpText');
+  const dissolveBtn = document.getElementById('dissolveThoughtBtn');
+  const outputBox = document.getElementById('dissolveOutputBox');
+  const reframingText = document.getElementById('dissolveReframingText');
+
+  const reframingNotes = [
+    "You have safely expressed this thought out of your head. Remember: thoughts are mental events, not objective facts.",
+    "By naming your stress, you have deactivated your brain's alarm system. Take one deep exhale.",
+    "You do not need to solve all problems right now. Taking a rest is productive.",
+    "This stress is temporary. You possess the inner resilience to handle things step by step."
+  ];
+
+  if (dissolveBtn && dumpText) {
+    dissolveBtn.addEventListener('click', function() {
+      const text = dumpText.value.trim();
+      if (!text) {
+        alert("Please write a thought or stress point to dissolve first.");
+        return;
+      }
+
+      dumpText.style.transition = 'all 0.8s ease';
+      dumpText.style.opacity = '0.2';
+      dumpText.style.transform = 'scale(0.96)';
+
+      setTimeout(() => {
+        dumpText.value = '';
+        dumpText.style.opacity = '1';
+        dumpText.style.transform = 'scale(1)';
+        
+        reframingText.textContent = reframingNotes[Math.floor(Math.random() * reframingNotes.length)];
+        outputBox.classList.remove('d-none');
+        outputBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }, 750);
+    });
+  }
+
+  // --- VOICE SPEECH SYNTHESIS ENGINE ---
+  function speakVoice(text) {
+    if (!('speechSynthesis' in window)) return;
+    const voiceToggle = document.getElementById('voiceToggle');
+    if (voiceToggle && !voiceToggle.checked) return;
+
+    try {
+      window.speechSynthesis.cancel();
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.rate = 0.88;
+      utterance.pitch = 1.0;
+      utterance.lang = 'en-US';
+      window.speechSynthesis.speak(utterance);
+    } catch(e){}
+  }
+
+  const voiceToggleEl = document.getElementById('voiceToggle');
+  const voiceStatusText = document.getElementById('voiceStatusText');
+  if (voiceToggleEl && voiceStatusText) {
+    voiceToggleEl.addEventListener('change', function() {
+      if (this.checked) {
+        voiceStatusText.textContent = '(ON)';
+        voiceStatusText.className = 'text-success fw-bold';
+        speakVoice('Voice guidance enabled.');
+      } else {
+        voiceStatusText.textContent = '(OFF)';
+        voiceStatusText.className = 'text-muted fw-bold';
+        if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+      }
+    });
+  }
+
+  // --- TOOL 2: SOUNDSCAPE & VOICE BREATHING GAMES ---
+  const presetBtns = document.querySelectorAll('.sound-preset-btn');
+  const patternBtns = document.querySelectorAll('.breath-pattern-btn');
+  const ring = document.getElementById('reliefBreathingRing');
+  const phaseText = document.getElementById('reliefPhaseText');
+  const timerText = document.getElementById('reliefTimerText');
+  const startBreathingBtn = document.getElementById('startReliefBreathingBtn');
+
+  let currentPreset = 'rain';
+  let currentPattern = 'relax';
+  let breathingInterval = null;
+  let isBreathing = false;
+
+  presetBtns.forEach(btn => {
+    btn.addEventListener('click', function() {
+      presetBtns.forEach(b => b.classList.remove('active'));
+      this.classList.add('active');
+      currentPreset = this.getAttribute('data-preset');
+      if (isBreathing && currentPreset !== 'mute') playAmbient(currentPreset);
+      if (currentPreset === 'mute') stopAmbient();
+    });
+  });
+
+  patternBtns.forEach(btn => {
+    btn.addEventListener('click', function() {
+      patternBtns.forEach(b => b.classList.remove('active'));
+      this.classList.add('active');
+      currentPattern = this.getAttribute('data-pattern');
+    });
+  });
+
+  if (startBreathingBtn && ring) {
+    startBreathingBtn.addEventListener('click', function() {
+      if (isBreathing) {
+        clearInterval(breathingInterval);
+        stopAmbient();
+        if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+        isBreathing = false;
+        ring.className = 'relief-breathing-ring';
+        phaseText.textContent = 'Ready';
+        timerText.textContent = 'Click Start';
+        startBreathingBtn.innerHTML = '<i class="bi bi-play-fill me-1"></i> Start Voice-Guided Breathing Session';
+        return;
+      }
+
+      isBreathing = true;
+      if (currentPreset !== 'mute') playAmbient(currentPreset);
+      startBreathingBtn.innerHTML = '<i class="bi bi-stop-fill me-1"></i> Stop Breathing Session';
+
+      const patterns = {
+        relax: [
+          { phase: 'Inhale deeply...', voice: 'Inhale deeply through your nose.', class: 'inhale', duration: 4 },
+          { phase: 'Hold breath...', voice: 'Hold your breath softly.', class: 'hold', duration: 7 },
+          { phase: 'Exhale slowly...', voice: 'Exhale slowly through your mouth.', class: 'exhale', duration: 8 }
+        ],
+        box: [
+          { phase: 'Inhale 4s...', voice: 'Inhale, one, two, three, four.', class: 'inhale', duration: 4 },
+          { phase: 'Hold 4s...', voice: 'Hold, one, two, three, four.', class: 'hold', duration: 4 },
+          { phase: 'Exhale 4s...', voice: 'Exhale, one, two, three, four.', class: 'exhale', duration: 4 },
+          { phase: 'Hold 4s...', voice: 'Hold, one, two, three, four.', class: 'hold', duration: 4 }
+        ],
+        belly: [
+          { phase: 'Expand Belly 5s...', voice: 'Inhale, fill your lower belly with calm air.', class: 'inhale', duration: 5 },
+          { phase: 'Release Belly 5s...', voice: 'Exhale, let all muscle tension collapse.', class: 'exhale', duration: 5 }
+        ],
+        coherence: [
+          { phase: 'Inhale Pace 6s...', voice: 'Inhale peace and clarity.', class: 'inhale', duration: 6 },
+          { phase: 'Exhale Pace 6s...', voice: 'Exhale stress and tension.', class: 'exhale', duration: 6 }
+        ]
+      };
+
+      const cycle = patterns[currentPattern] || patterns.relax;
+      let cycleIdx = 0;
+      let secondsLeft = cycle[0].duration;
+
+      function updatePhase() {
+        const current = cycle[cycleIdx];
+        if (secondsLeft === current.duration) {
+          ring.className = 'relief-breathing-ring ' + current.class;
+          phaseText.textContent = current.phase;
+          speakVoice(current.voice);
+        }
+        timerText.textContent = secondsLeft + 's';
+
+        if (secondsLeft <= 1) {
+          cycleIdx = (cycleIdx + 1) % cycle.length;
+          secondsLeft = cycle[cycleIdx].duration;
+        } else {
+          secondsLeft--;
+        }
+      }
+
+      updatePhase();
+      breathingInterval = setInterval(updatePhase, 1000);
+    });
+  }
+
+  // --- TOOL 3: PROGRESSIVE MUSCLE RELAXATION (PMR) ---
+  const pmrSteps = [
+    { icon: "🗣️", title: "Step 1: Shoulders & Neck Release", desc: "Shrug your shoulders high towards your ears. Hold tightly for 5s... Drop them completely and feel the tension leave!" },
+    { icon: "😬", title: "Step 2: Jaw & Face Softening", desc: "Clench your jaw and purse your lips for 5s... Release, let your mouth gap slightly, and un-clench!" },
+    { icon: "✊", title: "Step 3: Hands & Arms Squeeze", desc: "Make tight fists with both hands and pull arms inward. Hold 5s... Open your hands wide and shake them loose!" },
+    { icon: "🫁", title: "Step 4: Chest & Stomach Expansion", desc: "Take a deep breath filling your lungs completely. Hold 5s... Exhale deeply with a sigh!" },
+    { icon: "🦶", title: "Step 5: Feet & Legs Release", desc: "Curl your toes downward and tighten your calf muscles. Hold 5s... Release and feel warmth flow through your legs!" }
+  ];
+
+  let pmrIdx = 0;
+  const pmrIcon = document.getElementById('pmrStepIcon');
+  const pmrTitle = document.getElementById('pmrStepTitle');
+  const pmrDesc = document.getElementById('pmrStepDesc');
+  const pmrBadge = document.getElementById('pmrStepBadge');
+  const pmrBar = document.getElementById('pmrProgressBar');
+  const pmrTimerBtn = document.getElementById('pmrTimerBtn');
+  const nextPmrBtn = document.getElementById('nextPmrStepBtn');
+
+  function renderPmrStep() {
+    const step = pmrSteps[pmrIdx];
+    pmrIcon.textContent = step.icon;
+    pmrTitle.textContent = step.title;
+    pmrDesc.textContent = step.desc;
+    pmrBadge.textContent = `Step ${pmrIdx + 1} of 5`;
+    pmrBar.style.width = `${((pmrIdx + 1) / 5) * 100}%`;
+  }
+
+  if (nextPmrBtn) {
+    nextPmrBtn.addEventListener('click', function() {
+      pmrIdx = (pmrIdx + 1) % pmrSteps.length;
+      renderPmrStep();
+    });
+  }
+
+  if (pmrTimerBtn) {
+    pmrTimerBtn.addEventListener('click', function() {
+      let countdown = 5;
+      pmrTimerBtn.disabled = true;
+      pmrTimerBtn.innerHTML = `Hold Tension: ${countdown}s`;
+
+      const t = setInterval(() => {
+        countdown--;
+        if (countdown <= 0) {
+          clearInterval(t);
+          pmrTimerBtn.disabled = false;
+          pmrTimerBtn.innerHTML = `✨ RELEASE NOW! (Feel the calm)`;
+        } else {
+          pmrTimerBtn.innerHTML = `Hold Tension: ${countdown}s`;
+        }
+      }, 1000);
+    });
+  }
+
+  // --- TOOL 4: 60-SECOND SOS RESETS ---
+  const sosData = {
+    racing: {
+      title: "60s Reset for Racing Thoughts (5-4-3-2-1 Technique)",
+      text: "Acknowledge **5 things** you can see around you right now, **4 things** you can touch, **3 things** you hear, **2 things** you smell, and **1 thing** you taste. This immediately forces your brain out of thought loops and back into sensory reality."
+    },
+    chest: {
+      title: "60s Reset for Chest Tightness (Long Exhale Protocol)",
+      text: "Un-clench your teeth and drop your shoulders. Inhale through your nose for 4 seconds, and blow out through pursed lips for **8 seconds**. Long exhales activate your vagus nerve to slow your racing heart rate."
+    },
+    burnout: {
+      title: "60s Reset for Work Burnout (Digital & Physical Break)",
+      text: "Close your eyes, push back from your screen, and drink a full glass of cold water. Remind yourself: *'I am allowed to pause. Rest is necessary for high performance.'*"
+    },
+    anger: {
+      title: "60s Reset for Frustration & Anger (Temperature Shift)",
+      text: "Splash cold water on your face or hold an ice cube in your palm for 20 seconds. Rapid cooling triggers the mammalian dive reflex, instantly lowering heart rate and intense emotional arousal."
+    }
+  };
+
+  const sosBtns = document.querySelectorAll('.sos-trigger-btn');
+  const sosBox = document.getElementById('sosDetailBox');
+  const sosTitle = document.getElementById('sosDetailTitle');
+  const sosText = document.getElementById('sosDetailText');
+
+  sosBtns.forEach(btn => {
+    btn.addEventListener('click', function() {
+      const type = this.getAttribute('data-sos');
+      const data = sosData[type];
+      if (data && sosBox) {
+        sosTitle.textContent = data.title;
+        sosText.innerHTML = data.text;
+        sosBox.classList.remove('d-none');
+        sosBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
+    });
+  });
+
+});
+</script>
+{% endblock %}
